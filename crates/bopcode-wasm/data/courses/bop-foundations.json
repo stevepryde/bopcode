@@ -1,0 +1,188 @@
+{
+  "world": {
+    "world_id": "bop-foundations",
+    "title": "Bop Foundations",
+    "description": "A slower, beginner-first path through Bop fundamentals with extra practice before each new concept.",
+    "story_intro": "Take your time, practice each idea, and build confidence before moving on.",
+    "theme": "grassy_plains",
+    "sort_order": 0
+  },
+  "levels": [
+    {
+      "level_id": "bop-beg-01",
+      "title": "Step by Step",
+      "description": "Move to the goal using simple right moves.",
+      "map": ["S..G"],
+      "completion": "reach_goal",
+      "stars": { "max_instructions": 3, "max_steps": 3 },
+      "starter_code": "move(\"right\")\n",
+      "hint": "Use move(\"right\") three times.",
+      "tutorial": "# Move Basics\nEach move command takes one step. Repeat the same command until you reach the goal."
+    },
+    {
+      "level_id": "bop-beg-02",
+      "title": "Longer Walk",
+      "description": "Reach a farther goal with clean, consistent movement.",
+      "map": ["S.....G"],
+      "completion": "reach_goal",
+      "stars": { "max_instructions": 6, "max_steps": 6 },
+      "starter_code": "move(\"right\")\n",
+      "hint": "Keep moving right until the bot stands on the goal tile.",
+      "tutorial": "# Practice Round\nThis is the same idea as level 1, just longer. Build fluency with movement."
+    },
+    {
+      "level_id": "bop-beg-03",
+      "title": "Turn the Corner",
+      "description": "Use a mix of directions to reach the goal.",
+      "map": ["#####", "#S..#", "###.#", "#..G#", "#####"],
+      "completion": "reach_goal",
+      "stars": { "max_instructions": 5, "max_steps": 4 },
+      "starter_code": "move(\"right\")\n",
+      "hint": "Move right first, then down to the goal.",
+      "tutorial": "# Four Directions\nBop movement is not just right. Combine directions to route around walls."
+    },
+    {
+      "level_id": "bop-beg-04",
+      "title": "Movement Checkpoint",
+      "description": "Navigate a short route with walls and one final turn.",
+      "map": ["########", "#S.....#", "###.####", "#...G..#", "########"],
+      "completion": "reach_goal",
+      "stars": { "max_instructions": 8, "max_steps": 7 },
+      "starter_code": "move(\"right\")\n",
+      "hint": "Find the gap in the wall row, then route to the goal.",
+      "tutorial": "# Checkpoint\nYou have enough movement tools now. Solve this route before adding new commands."
+    },
+    {
+      "level_id": "bop-beg-05",
+      "title": "First Gem Pickup",
+      "description": "Collect the gem and then reach the goal.",
+      "map": ["S.*.G"],
+      "completion": "collect_all_gems_and_reach_goal",
+      "stars": { "max_instructions": 7, "max_steps": 6 },
+      "starter_code": "move(\"right\")\n",
+      "hint": "Stand on the gem tile before calling grab().",
+      "tutorial": "# Collecting Gems\nUse grab() only when your bot is standing on a gem tile."
+    },
+    {
+      "level_id": "bop-beg-06",
+      "title": "Two Gems in a Row",
+      "description": "Collect both gems, then finish at the goal.",
+      "map": ["S.*.*.G"],
+      "completion": "collect_all_gems_and_reach_goal",
+      "stars": { "max_instructions": 10, "max_steps": 9 },
+      "starter_code": "move(\"right\")\n",
+      "hint": "Move and grab in sequence so no gem is missed.",
+      "tutorial": "# Sequencing\nYour code runs top to bottom. Plan the full path before you type."
+    },
+    {
+      "level_id": "bop-beg-07",
+      "title": "Gem Practice Checkpoint",
+      "description": "A longer line with empty spaces between gems.",
+      "map": ["S.*..*..G"],
+      "completion": "collect_all_gems_and_reach_goal",
+      "stars": { "max_instructions": 13, "max_steps": 11 },
+      "starter_code": "move(\"right\")\n",
+      "hint": "Do not call grab() on empty tiles.",
+      "tutorial": "# Checkpoint\nPractice movement plus gem collection before introducing loops."
+    },
+    {
+      "level_id": "bop-beg-08",
+      "title": "Your First repeat Loop",
+      "description": "Use repeat to avoid writing the same line many times.",
+      "map": ["S.......G"],
+      "completion": "reach_goal",
+      "stars": { "max_instructions": 4, "max_steps": 8 },
+      "starter_code": "repeat 3 {\n    move(\"right\")\n}\n",
+      "hint": "Increase the repeat count until the bot reaches the goal.",
+      "tutorial": "# repeat\nUse repeat N { ... } when you know exactly how many times an action should run."
+    },
+    {
+      "level_id": "bop-beg-09",
+      "title": "repeat and grab",
+      "description": "Apply a repeating move pattern while collecting gems.",
+      "map": ["S*.*.*.*G"],
+      "completion": "collect_all_gems_and_reach_goal",
+      "stars": { "max_instructions": 10, "max_steps": 13 },
+      "starter_code": "repeat 2 {\n    move(\"right\")\n}\n",
+      "hint": "Use a 2-step loop body: move right, grab if gem_here(), move right. Repeat that pattern 4 times.",
+      "tutorial": "# Loop Patterns\nA good loop body matches the shape of the level."
+    },
+    {
+      "level_id": "bop-beg-10",
+      "title": "Repeat Checkpoint",
+      "description": "Use loops and path planning to collect gems in a small route.",
+      "map": ["##########", "#S.......#", "###.######", "#*.*.*..G#", "##########"],
+      "completion": "collect_all_gems_and_reach_goal",
+      "stars": { "max_instructions": 14, "max_steps": 18 },
+      "starter_code": "repeat 2 {\n    move(\"right\")\n}\n",
+      "hint": "Go right to the center opening, drop down to the gem row, clear left gem first, then sweep right through the remaining gems to the goal.",
+      "tutorial": "# Checkpoint\nThis level combines movement, grabbing, and looping in one puzzle."
+    },
+    {
+      "level_id": "bop-beg-11",
+      "title": "Only Grab When Needed",
+      "description": "Use if gem_here() so grab() only runs on gem tiles.",
+      "map": ["S.*..*...*G"],
+      "completion": "collect_all_gems_and_reach_goal",
+      "stars": { "max_instructions": 14, "max_steps": 14 },
+      "starter_code": "repeat 10 {\n    move(\"right\")\n    if gem_here() { grab() }\n}\n",
+      "hint": "Conditionals are useful when not every tile needs the same action.",
+      "tutorial": "# if Conditions\nif gem_here() lets you write safe code that works on mixed tiles."
+    },
+    {
+      "level_id": "bop-beg-12",
+      "title": "if Practice Lap",
+      "description": "Collect all gems in a small map with branches.",
+      "map": ["#########", "#S.*..G.#", "#.###.#.#", "#*...*..#", "#########"],
+      "completion": "collect_all_gems_and_reach_goal",
+      "stars": { "max_instructions": 18, "max_steps": 18 },
+      "starter_code": "if gem_here() { grab() }\nmove(\"right\")\n",
+      "hint": "Collect the top gem first, return to the left column, go down to the lower-left gem, then traverse right for the last gem and climb back up to the goal.",
+      "tutorial": "# Conditional Practice\nNow use if in a non-linear level where tiles are less predictable."
+    },
+    {
+      "level_id": "bop-beg-13",
+      "title": "while Until the Wall",
+      "description": "Use while path_ahead() to move until blocked.",
+      "map": ["##########", "#S......G#", "##########"],
+      "completion": "reach_goal",
+      "stars": { "max_instructions": 4, "max_steps": 7 },
+      "starter_code": "while path_ahead() {\n    move(\"right\")\n}\n",
+      "hint": "The loop should stop naturally at the wall.",
+      "tutorial": "# while Loops\nUse while when you do not want to hardcode an exact count."
+    },
+    {
+      "level_id": "bop-beg-14",
+      "title": "while + if Together",
+      "description": "Combine a loop and a conditional to collect gems on the way.",
+      "map": ["###########", "#S.*..*..G#", "###########"],
+      "completion": "collect_all_gems_and_reach_goal",
+      "stars": { "max_instructions": 12, "max_steps": 11 },
+      "starter_code": "while path_ahead() {\n    move(\"right\")\n    if gem_here() { grab() }\n}\n",
+      "hint": "Move first, then check for a gem on the current tile.",
+      "tutorial": "# Combined Control Flow\nThis is a core Bop pattern: loop forward, conditionally act."
+    },
+    {
+      "level_id": "bop-beg-15",
+      "title": "Checkpoint: Gentle Maze",
+      "description": "A calm maze that reinforces planning, loops, and safe grabs.",
+      "map": ["#########", "#S.....G#", "###.###.#", "#*..#...#", "#...#*..#", "#########"],
+      "completion": "collect_all_gems_and_reach_goal",
+      "stars": { "max_instructions": 26, "max_steps": 30 },
+      "starter_code": "if gem_here() { grab() }\nmove(\"right\")\n",
+      "hint": "Take the center opening to get the left gem first, return to the top lane, move to the right opening for the second gem, then climb back to the goal.",
+      "tutorial": "# Checkpoint\nYou are now combining movement, conditionals, and route planning confidently."
+    },
+    {
+      "level_id": "bop-beg-16",
+      "title": "Bop Foundations Finale",
+      "description": "Final beginner challenge: collect gems and finish with clean structure.",
+      "map": ["############", "#S.*..#...G#", "#.#.#.#.#..#", "#...#...#*.#", "############"],
+      "completion": "collect_all_gems_and_reach_goal",
+      "stars": { "max_instructions": 30, "max_steps": 24 },
+      "starter_code": "while path_ahead() {\n    move(\"right\")\n    if gem_here() { grab() }\n}\n",
+      "hint": "Section it: grab the left gem, route through the middle bridge to the top-right lane, drop to the bottom-right gem, then return up and finish at the goal.",
+      "tutorial": "# Foundations Complete\nThis level is intentionally broader. Solve it with the patterns you practiced."
+    }
+  ]
+}

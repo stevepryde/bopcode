@@ -1,0 +1,92 @@
+@import "tailwindcss";
+
+@theme {
+  /* Primary brand colors — violet */
+  --color-primary-50: #f5f3ff;
+  --color-primary-100: #ede9fe;
+  --color-primary-200: #ddd6fe;
+  --color-primary-300: #c4b5fd;
+  --color-primary-400: #a78bfa;
+  --color-primary-500: #8b5cf6;
+  --color-primary-600: #7c3aed;
+  --color-primary-700: #6d28d9;
+  --color-primary-800: #5b21b6;
+  --color-primary-900: #4c1d95;
+
+  /* Success/achievement colors */
+  --color-success-50: #ecfdf5;
+  --color-success-100: #d1fae5;
+  --color-success-200: #a7f3d0;
+  --color-success-300: #6ee7b7;
+  --color-success-400: #34d399;
+  --color-success-500: #10b981;
+  --color-success-600: #059669;
+  --color-success-700: #047857;
+  --color-success-800: #065f46;
+  --color-success-900: #064e3b;
+
+  /* Warning/challenge colors */
+  --color-warning-50: #fffbeb;
+  --color-warning-100: #fef3c7;
+  --color-warning-200: #fde68a;
+  --color-warning-300: #fcd34d;
+  --color-warning-400: #fbbf24;
+  --color-warning-500: #f59e0b;
+  --color-warning-600: #d97706;
+  --color-warning-700: #b45309;
+  --color-warning-800: #92400e;
+  --color-warning-900: #78350f;
+
+  /* Fun/playful accent colors */
+  --color-fun-purple: #8b5cf6;
+  --color-fun-pink: #ec4899;
+  --color-fun-orange: #f97316;
+  --color-fun-emerald: #10b981;
+
+  /* Custom font families */
+  --font-game: Inter, system-ui, sans-serif;
+
+  /* Custom animations */
+  --animate-bounce-gentle: bounce 2s infinite;
+  --animate-pulse-slow: pulse 3s infinite;
+  --animate-wiggle: wiggle 1s ease-in-out infinite;
+  --animate-level-up: levelUp 0.6s ease-out;
+  --animate-achievement: achievement 0.8s ease-out;
+
+  /* Custom shadows */
+  --shadow-game: 0 4px 14px 0 rgba(139, 92, 246, 0.39);
+  --shadow-game-hover: 0 6px 20px rgba(139, 92, 246, 0.23);
+  --shadow-achievement: 0 8px 32px rgba(139, 92, 246, 0.3);
+  --shadow-glow: 0 0 20px rgba(139, 92, 246, 0.6);
+}
+
+/* Custom keyframes */
+@keyframes wiggle {
+  0%, 100% { transform: rotate(-3deg); }
+  50% { transform: rotate(3deg); }
+}
+
+@keyframes levelUp {
+  0% { transform: scale(1) rotate(0deg); opacity: 1; }
+  50% { transform: scale(1.2) rotate(5deg); opacity: 0.8; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+@keyframes achievement {
+  0% { transform: scale(0.8); opacity: 0; }
+  50% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes confetti-fall {
+  0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+}
+
+/* iOS viewport fix */
+@supports (-webkit-touch-callout: none) {
+  .h-screen {
+    height: 100dvh;
+    max-height: -webkit-fill-available !important;
+  }
+}
