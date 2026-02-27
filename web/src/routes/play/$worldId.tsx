@@ -178,6 +178,7 @@ function PlayPage() {
           </div>
         ) : currentPuzzle ? (
           <PuzzlePlayground
+            key={currentPuzzle.puzzle_id}
             puzzle={currentPuzzle}
             worldName={worldTitle}
             onNextPuzzle={handleNextPuzzle}
