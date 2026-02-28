@@ -5,10 +5,10 @@ export function BopReference() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="shrink-0 border-t border-zinc-800">
+    <div className="shrink-0 border-t border-zinc-200 dark:border-zinc-800">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50 transition-colors cursor-pointer"
+        className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800/50 transition-colors cursor-pointer"
       >
         Bop Language Reference
         {isOpen ? (
@@ -17,11 +17,11 @@ export function BopReference() {
           <ChevronUp className="h-4 w-4" />
         )}
         <a
-          href="https://github.com/stevepryde/bop-lang"
+          href="https://stevepryde.github.io/bop-lang/"
           target="_blank"
           rel="noopener noreferrer"
           onClick={(e) => e.stopPropagation()}
-          className="ml-auto flex items-center gap-1 text-xs text-violet-400 hover:text-violet-300 transition-colors"
+          className="ml-auto flex items-center gap-1 text-xs text-[var(--theme-700)] dark:text-[var(--theme-400)] hover:text-[var(--theme-600)] dark:hover:text-[var(--theme-300)] transition-colors"
         >
           Full Docs
           <ExternalLink className="h-3 w-3" />
@@ -107,7 +107,7 @@ export function BopReference() {
 function Fn({ name, desc }: { name: string; desc: string }) {
   return (
     <div>
-      <dt className="font-mono text-xs text-violet-400">{name}</dt>
+      <dt className="font-mono text-xs text-[var(--theme-700)] dark:text-[var(--theme-300)]">{name}</dt>
       <dd className="text-xs text-zinc-500 ml-2">{desc}</dd>
     </div>
   );

@@ -10,7 +10,7 @@ const badgeVariants = cva(
         success: "bg-emerald-900/50 text-emerald-300 border border-emerald-700/50",
         warning: "bg-amber-900/50 text-amber-300 border border-amber-700/50",
         error: "bg-red-900/50 text-red-300 border border-red-700/50",
-        purple: "bg-violet-900/50 text-violet-300 border border-violet-700/50",
+        accent: "bg-[var(--theme-500)]/10 text-[var(--theme-700)] dark:text-[var(--theme-300)] border border-[var(--theme-700)]/50",
         outline: "border border-zinc-600 text-zinc-300",
       },
     },

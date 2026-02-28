@@ -35,6 +35,34 @@ pub fn run_simulation(puzzle_id: &str, code: &str) -> JsValue {
 }
 
 #[wasm_bindgen]
+pub fn run_simulation_with_config(config: JsValue, code: &str) -> JsValue {
+    let puzzle: models::PuzzleConfig = match serde_wasm_bindgen::from_value(config) {
+        Ok(p) => p,
+        Err(e) => {
+            let error_result = models::SimulationResult {
+                actions: vec![],
+                final_state: models::BotState::new(
+                    models::Position::new(0, 0),
+                    models::Direction::Right,
+                ),
+                final_grid: models::Grid::new(1, 1),
+                puzzle_completed: false,
+                stars_met: vec![],
+                error: Some(models::SimulationError {
+                    line: None,
+                    column: None,
+                    message: format!("Invalid puzzle config: {}", e),
+                    friendly_hint: None,
+                }),
+            };
+            return serde_wasm_bindgen::to_value(&error_result).unwrap_or(JsValue::NULL);
+        }
+    };
+    let result = engine::run_simulation(code, &puzzle);
+    serde_wasm_bindgen::to_value(&result).unwrap_or(JsValue::NULL)
+}
+
+#[wasm_bindgen]
 pub fn get_worlds() -> JsValue {
     let worlds = levels::get_worlds();
     serde_wasm_bindgen::to_value(&worlds).unwrap_or(JsValue::NULL)

@@ -9,27 +9,27 @@ interface GameGridProps {
 }
 
 const COLORS = {
-  floor: "#09090b", // zinc-950
-  wall: "#3f3f46", // zinc-700
-  goal: "#34d399", // emerald-400
-  goalGlow: "#6ee7b7", // emerald-300
-  gem: "#c084fc", // purple-400
-  gemGlow: "#d8b4fe", // purple-300
-  bot: "#818cf8", // indigo-400
-  botOutline: "#a5b4fc", // indigo-300
-  gridLine: "#3f3f46", // zinc-700
-  pit: "#18181b", // zinc-900
-  pitBorder: "#991b1b", // red-800
-  lockedDoor: "#9333ea", // purple-600
-  lockedDoorGlow: "#c084fc", // purple-400
-  gemVault: "#be185d", // pink-700
-  gemVaultGlow: "#f472b6", // pink-400
-  diamondVault: "#0369a1", // sky-700
-  diamondVaultGlow: "#38bdf8", // sky-400
-  key: "#facc15", // yellow-400
-  keyGlow: "#fde047", // yellow-300
-  diamond: "#38bdf8", // sky-400
-  diamondGlow: "#7dd3fc", // sky-300
+  floor: "#0f0f14", // soft dark
+  wall: "#4a4a55", // muted slate
+  goal: "#86efac", // soft mint green
+  goalGlow: "#bbf7d0", // lighter mint
+  gem: "#d8b4fe", // soft lavender
+  gemGlow: "#e9d5ff", // lighter lavender
+  bot: "#a5b4fc", // soft periwinkle
+  botOutline: "#c7d2fe", // lighter periwinkle
+  gridLine: "#3b3b47", // subtle grid
+  pit: "#1a1a22", // dark pit
+  pitBorder: "#fca5a5", // soft coral
+  lockedDoor: "#c4b5fd", // soft purple
+  lockedDoorGlow: "#ddd6fe", // lighter purple
+  gemVault: "#f9a8d4", // soft pink
+  gemVaultGlow: "#fbcfe8", // lighter pink
+  diamondVault: "#7dd3fc", // soft sky
+  diamondVaultGlow: "#bae6fd", // lighter sky
+  key: "#fde68a", // soft gold
+  keyGlow: "#fef9c3", // lighter gold
+  diamond: "#7dd3fc", // soft sky
+  diamondGlow: "#bae6fd", // lighter sky
 };
 
 export function GameGrid({
@@ -161,7 +161,7 @@ export function GameGrid({
   }, [grid, botState, tileSize]);
 
   return (
-    <div className={`inline-block rounded-lg overflow-hidden border border-violet-400/40 shadow-lg shadow-violet-500/10 ${className}`}>
+    <div className={`inline-block rounded-lg overflow-hidden border border-zinc-300 dark:border-zinc-600/40 shadow-lg ${className}`}>
       <canvas
         ref={canvasRef}
         style={{

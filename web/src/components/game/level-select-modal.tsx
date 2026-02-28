@@ -48,13 +48,13 @@ export function LevelSelectModal({
       onClick={handleBackdropClick}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
     >
-      <div className="bg-zinc-900 border border-violet-500/20 rounded-xl shadow-[0_0_40px_rgba(139,92,246,0.25)] max-w-2xl w-full max-h-[80vh] flex flex-col">
+      <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700/40 rounded-xl shadow-2xl max-w-2xl w-full max-h-[80vh] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-800">
-          <h2 className="text-lg font-bold text-white">Select Level</h2>
+        <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-200 dark:border-zinc-800">
+          <h2 className="text-lg font-bold text-zinc-900 dark:text-white">Select Level</h2>
           <button
             onClick={onClose}
-            className="text-zinc-400 hover:text-white transition-colors cursor-pointer"
+            className="text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors cursor-pointer"
           >
             <X className="h-5 w-5" />
           </button>
@@ -92,16 +92,16 @@ export function LevelSelectModal({
         </div>
 
         {/* Footer -- reset progress */}
-        <div className="px-6 py-3 border-t border-zinc-800">
+        <div className="px-6 py-3 border-t border-zinc-200 dark:border-zinc-800">
           {confirmReset ? (
             <div className="flex items-center justify-between">
-              <span className="text-sm text-zinc-300">
+              <span className="text-sm text-zinc-600 dark:text-zinc-300">
                 Reset all progress and code for this world?
               </span>
               <div className="flex gap-2">
                 <button
                   onClick={() => setConfirmReset(false)}
-                  className="px-3 py-1 text-sm text-zinc-400 hover:text-white transition-colors cursor-pointer"
+                  className="px-3 py-1 text-sm text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -161,12 +161,12 @@ function LevelCard({
   }, [level.puzzle_id, isUnlocked]);
 
   const borderColor = isCurrent
-    ? "border-violet-500"
+    ? "border-[var(--theme-400)]"
     : isCompleted
-      ? "border-violet-400/30"
+      ? "border-[var(--theme-300)]/25"
       : isUnlocked
-        ? "border-zinc-700"
-        : "border-zinc-800";
+        ? "border-zinc-300 dark:border-zinc-700"
+        : "border-zinc-200 dark:border-zinc-800";
 
   return (
     <button
@@ -174,8 +174,8 @@ function LevelCard({
       disabled={!isUnlocked}
       className={`w-full flex items-center gap-4 p-3 rounded-lg border ${borderColor} transition-colors text-left ${
         isUnlocked
-          ? "bg-zinc-800/50 hover:bg-zinc-800 cursor-pointer"
-          : "bg-zinc-900/50 opacity-50 cursor-not-allowed"
+          ? "bg-zinc-50 dark:bg-zinc-800/50 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
+          : "bg-zinc-50/50 dark:bg-zinc-900/50 opacity-50 cursor-not-allowed"
       }`}
     >
       {/* Thumbnail */}
@@ -200,14 +200,14 @@ function LevelCard({
             Level {index + 1}
           </span>
           {isCompleted && (
-            <span className="flex items-center gap-0.5 text-xs text-emerald-400">
+            <span className="flex items-center gap-0.5 text-xs text-emerald-300">
               <Check className="h-3 w-3 mr-1" />
               {[0, 1, 2].map((i) => (
                 <Star
                   key={i}
                   className={`h-3 w-3 ${
                     i < stars
-                      ? "text-yellow-400 fill-yellow-400"
+                      ? "text-yellow-300 fill-yellow-300"
                       : "text-zinc-600"
                   }`}
                 />
@@ -215,10 +215,10 @@ function LevelCard({
             </span>
           )}
           {isCurrent && !isCompleted && (
-            <span className="text-xs text-violet-400">Current</span>
+            <span className="text-xs text-[var(--theme-700)] dark:text-[var(--theme-400)]">Current</span>
           )}
         </div>
-        <p className="text-sm font-semibold text-white truncate">
+        <p className="text-sm font-semibold text-zinc-900 dark:text-white truncate">
           {level.title}
         </p>
         <p className="text-xs text-zinc-400 line-clamp-2">

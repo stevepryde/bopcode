@@ -3,24 +3,24 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-900 disabled:pointer-events-none disabled:opacity-50 active:scale-95 cursor-pointer",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-900 disabled:pointer-events-none disabled:opacity-50 active:scale-95 cursor-pointer",
   {
     variants: {
       variant: {
         primary:
-          "bg-violet-600 text-white shadow-game hover:bg-violet-500 hover:shadow-game-hover",
+          "bg-[var(--theme-500)] text-[var(--theme-contrast)] shadow-game hover:bg-[var(--theme-400)] hover:shadow-game-hover",
         secondary:
-          "bg-zinc-800 text-zinc-100 border border-zinc-700 hover:bg-zinc-700 hover:border-zinc-600",
+          "bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-100 border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-200 dark:hover:bg-zinc-700 hover:border-zinc-400 dark:hover:border-zinc-600",
         success:
-          "bg-emerald-600 text-white hover:bg-emerald-500",
+          "bg-emerald-500 text-white hover:bg-emerald-400",
         warning:
-          "bg-amber-600 text-white hover:bg-amber-500",
+          "bg-amber-500 text-white hover:bg-amber-400",
         danger:
-          "bg-red-600 text-white hover:bg-red-500",
+          "bg-red-500 text-white hover:bg-red-400",
         ghost:
-          "text-zinc-300 hover:bg-zinc-800 hover:text-white",
+          "text-zinc-500 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white",
         link:
-          "text-violet-400 underline-offset-4 hover:underline hover:text-violet-300",
+          "text-[var(--theme-700)] dark:text-[var(--theme-400)] underline-offset-4 hover:underline",
       },
       size: {
         sm: "h-8 px-3 text-xs rounded-lg",

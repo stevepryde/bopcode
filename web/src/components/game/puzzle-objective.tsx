@@ -126,7 +126,7 @@ export function PuzzleObjectivePanel({
   const goalsMetCount = goalStatuses.filter(Boolean).length;
 
   return (
-    <div className="bg-zinc-900 rounded-lg p-4 space-y-4 border border-zinc-800 border-l-2 border-l-violet-500/40">
+    <div className="bg-zinc-50 dark:bg-zinc-900 rounded-lg p-4 space-y-4 border border-zinc-200 dark:border-zinc-800 border-l-2 border-l-[var(--theme-400)]/35">
       {/* Title -- clickable to collapse */}
       <button
         onClick={onToggle}
@@ -139,13 +139,13 @@ export function PuzzleObjectivePanel({
           ) : (
             <ChevronDown className="h-5 w-5 text-zinc-400 shrink-0" />
           ))}
-        <h2 className="text-xl font-bold text-white">{title}</h2>
+        <h2 className="text-xl font-bold text-zinc-900 dark:text-white">{title}</h2>
 
         {/* Collapsed inline summary: goal + stars */}
         {collapsed && (
           <div className="flex items-center gap-3 ml-auto shrink-0">
             {/* Goal status */}
-            <span className={`text-xs ${puzzleCompleted ? "text-emerald-400" : "text-zinc-500"}`}>
+            <span className={`text-xs ${puzzleCompleted ? "text-emerald-600 dark:text-emerald-300" : "text-zinc-500"}`}>
               {puzzleCompleted ? (
                 <Check className="h-4 w-4" />
               ) : (
@@ -166,7 +166,7 @@ export function PuzzleObjectivePanel({
                     key={index}
                     className={`h-4 w-4 ${
                       isMet
-                        ? "text-yellow-400 fill-yellow-400"
+                        ? "text-yellow-300 fill-yellow-300"
                         : "text-zinc-600"
                     }`}
                   />
@@ -179,11 +179,11 @@ export function PuzzleObjectivePanel({
 
       {!collapsed && (
         <>
-          <p className="text-sm text-zinc-400">{description}</p>
+          <p className="text-sm text-zinc-500 dark:text-zinc-400">{description}</p>
 
           {/* Completion objective */}
           <div className="space-y-2">
-            <h3 className="text-sm font-semibold text-zinc-300 uppercase tracking-wide">
+            <h3 className="text-sm font-semibold text-zinc-500 dark:text-zinc-300 uppercase tracking-wide">
               {goals.length > 1 ? "Goals" : "Goal"}
             </h3>
             <ul className="space-y-2">
@@ -193,11 +193,11 @@ export function PuzzleObjectivePanel({
                   <li
                     key={`${goal.type}-${index}`}
                     className={`flex items-center gap-2 text-sm ${
-                      isMet ? "text-emerald-400" : "text-zinc-300"
+                      isMet ? "text-emerald-600 dark:text-emerald-300" : "text-zinc-600 dark:text-zinc-300"
                     }`}
                   >
                     {isMet ? (
-                      <Check className="h-4 w-4 text-emerald-400" />
+                      <Check className="h-4 w-4 text-emerald-600 dark:text-emerald-300" />
                     ) : (
                       <div className="h-4 w-4 rounded-full border-2 border-zinc-500" />
                     )}
@@ -213,7 +213,7 @@ export function PuzzleObjectivePanel({
           {/* Star objectives */}
           {starObjectives.length > 0 && (
             <div className="space-y-2">
-              <h3 className="text-sm font-semibold text-zinc-300 uppercase tracking-wide">
+              <h3 className="text-sm font-semibold text-zinc-500 dark:text-zinc-300 uppercase tracking-wide">
                 Stars
               </h3>
               <ul className="space-y-2">
@@ -223,13 +223,13 @@ export function PuzzleObjectivePanel({
                     <li
                       key={index}
                       className={`flex items-center gap-2 text-sm ${
-                        isMet ? "text-yellow-400" : "text-zinc-300"
+                        isMet ? "text-yellow-600 dark:text-yellow-300" : "text-zinc-600 dark:text-zinc-300"
                       }`}
                     >
                       <Star
                         className={`h-4 w-4 ${
                           isMet
-                            ? "text-yellow-400 fill-yellow-400"
+                            ? "text-yellow-300 fill-yellow-300"
                             : "text-zinc-500"
                         }`}
                       />
@@ -245,8 +245,8 @@ export function PuzzleObjectivePanel({
 
           {/* Hint */}
           {showHint && hint && (
-            <div className="pt-2 border-t border-zinc-800">
-              <p className="text-xs text-amber-400">
+            <div className="pt-2 border-t border-zinc-200 dark:border-zinc-800">
+              <p className="text-xs text-amber-600 dark:text-amber-300">
                 <strong>Hint:</strong> {hint}
               </p>
             </div>

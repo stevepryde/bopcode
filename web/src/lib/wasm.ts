@@ -23,6 +23,14 @@ export function runSimulation(
   return wasmModule.run_simulation(puzzleId, code) as SimulationResult;
 }
 
+export function runSimulationWithConfig(
+  config: PuzzleConfig,
+  code: string,
+): SimulationResult {
+  if (!wasmModule) throw new Error("WASM not initialized");
+  return wasmModule.run_simulation_with_config(config, code) as SimulationResult;
+}
+
 export function getWorlds(): WorldInfo[] {
   if (!wasmModule) throw new Error("WASM not initialized");
   return wasmModule.get_worlds() as WorldInfo[];

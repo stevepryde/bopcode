@@ -36,7 +36,7 @@ export function App() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-zinc-900 text-zinc-100">
         <div className="text-center space-y-4">
-          <div className="w-8 h-8 border-2 border-violet-500 border-t-transparent rounded-full animate-spin mx-auto" />
+          <div className="w-8 h-8 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin mx-auto" />
           <p className="text-zinc-400">Loading bopcode...</p>
         </div>
       </div>

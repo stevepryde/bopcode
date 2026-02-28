@@ -30,7 +30,7 @@ export function PlaybackControls({
   disabled = false,
 }: PlaybackControlsProps) {
   return (
-    <div className="flex items-center gap-1.5 px-2 py-1 bg-zinc-900 rounded-lg border border-zinc-800">
+    <div className="flex items-center gap-1.5 px-2 py-1 bg-zinc-100 dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800">
       {/* Play/Pause Button */}
       <Button
         variant="ghost"

@@ -10,6 +10,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { runSimulation } from "@/lib/wasm";
 import { registerBopLanguage } from "@/lib/monaco-bop";
+import { useColorMode } from "@/lib/theme";
 import type {
   PuzzleConfig,
   BotState,
@@ -29,6 +30,8 @@ interface PuzzlePlaygroundProps {
   onSaveCode: (code: string) => void;
   savedCode?: string;
   hasNextPuzzle: boolean;
+  repeatLabel?: string;
+  completionLabel?: string;
 }
 
 export function PuzzlePlayground({
@@ -40,6 +43,8 @@ export function PuzzlePlayground({
   onSaveCode,
   savedCode,
   hasNextPuzzle,
+  repeatLabel,
+  completionLabel,
 }: PuzzlePlaygroundProps) {
   // Code state
   const [code, setCode] = useState(savedCode ?? puzzle.starter_code);
@@ -295,8 +300,11 @@ export function PuzzlePlayground({
     celebrationShownRef.current = false;
   };
 
+  const colorMode = useColorMode();
+  const monacoTheme = colorMode === "dark" ? "vs-dark" : "vs";
+
   return (
-    <div className="flex flex-col h-full bg-zinc-950 relative">
+    <div className="flex flex-col h-full bg-white dark:bg-zinc-950 relative">
       {/* Main playground area */}
       <div className="flex flex-col lg:flex-row gap-4 flex-1 min-h-0 p-4">
         {/* Left Panel: Tab Bar + Content */}
@@ -308,8 +316,8 @@ export function PuzzlePlayground({
                 onClick={() => setLeftTab("instructions")}
                 className={`px-3 py-1.5 text-sm font-medium rounded-t-md transition-colors cursor-pointer ${
                   leftTab === "instructions"
-                    ? "bg-violet-600/30 text-violet-300 border-b-2 border-violet-400"
-                    : "text-zinc-400 hover:text-zinc-200"
+                    ? "bg-[var(--theme-500)]/20 text-[var(--theme-700)] dark:text-[var(--theme-300)] border-b-2 border-[var(--theme-500)] dark:border-[var(--theme-400)]/70"
+                    : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200"
                 }`}
               >
                 Instructions
@@ -318,8 +326,8 @@ export function PuzzlePlayground({
                 onClick={() => setLeftTab("puzzle")}
                 className={`px-3 py-1.5 text-sm font-medium rounded-t-md transition-colors cursor-pointer ${
                   leftTab === "puzzle"
-                    ? "bg-violet-600/30 text-violet-300 border-b-2 border-violet-400"
-                    : "text-zinc-400 hover:text-zinc-200"
+                    ? "bg-[var(--theme-500)]/20 text-[var(--theme-700)] dark:text-[var(--theme-300)] border-b-2 border-[var(--theme-500)] dark:border-[var(--theme-400)]/70"
+                    : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200"
                 }`}
               >
                 Puzzle
@@ -329,18 +337,21 @@ export function PuzzlePlayground({
 
           {/* Instructions Tab */}
           {leftTab === "instructions" && hasTutorial ? (
-            <div className="flex-1 min-h-0 overflow-auto rounded-lg border border-violet-500/20 bg-zinc-900/50 p-6">
-              <div className="prose prose-sm prose-invert max-w-none
-                prose-headings:text-zinc-100
-                prose-p:text-zinc-300
-                prose-strong:text-zinc-100
-                prose-code:text-violet-400 prose-code:bg-zinc-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none
-                prose-pre:bg-zinc-800 prose-pre:text-zinc-200 prose-pre:rounded-lg
+            <div className="flex-1 min-h-0 overflow-auto rounded-lg border border-zinc-200 dark:border-zinc-700/40 bg-zinc-50 dark:bg-zinc-900/50 p-6">
+              <div className="prose max-w-none
+                prose-headings:text-zinc-800 prose-p:text-zinc-600 prose-strong:text-zinc-800
+                prose-li:text-zinc-600 prose-th:text-zinc-600 prose-td:text-zinc-500
+                prose-code:text-[var(--theme-700)] prose-code:bg-zinc-200 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none
+                prose-pre:bg-zinc-100 prose-pre:text-zinc-800 prose-pre:rounded-lg
                 [&_pre_code]:p-0 [&_pre_code]:bg-transparent [&_pre_code]:text-inherit [&_pre_code]:rounded-none
-                prose-th:text-zinc-300 prose-td:text-zinc-400
-                prose-li:text-zinc-300
-                prose-a:text-violet-400 prose-a:no-underline hover:prose-a:underline
-                prose-hr:border-zinc-700">
+                prose-a:text-[var(--theme-700)] prose-a:no-underline hover:prose-a:underline
+                prose-hr:border-zinc-300
+                dark:prose-headings:text-zinc-100 dark:prose-p:text-zinc-300 dark:prose-strong:text-zinc-100
+                dark:prose-li:text-zinc-300 dark:prose-th:text-zinc-300 dark:prose-td:text-zinc-400
+                dark:prose-code:text-[var(--theme-300)] dark:prose-code:bg-zinc-800
+                dark:prose-pre:bg-zinc-800 dark:prose-pre:text-zinc-200
+                dark:prose-a:text-[var(--theme-300)]
+                dark:prose-hr:border-zinc-700">
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>
                   {puzzle.tutorial!}
                 </ReactMarkdown>
@@ -400,11 +411,11 @@ export function PuzzlePlayground({
         {/* Right Panel: Code Editor */}
         <div className="flex flex-col lg:w-1/2 min-h-0">
           {/* Code Editor */}
-          <div className="flex-1 min-h-[200px] rounded-lg overflow-hidden border border-violet-500/20">
+          <div className="flex-1 min-h-[200px] rounded-lg overflow-hidden border border-zinc-200 dark:border-zinc-700/40">
             <Editor
               height="100%"
               language="bop"
-              theme="vs-dark"
+              theme={monacoTheme}
               value={code}
               onChange={(val) => setCode(val ?? "")}
               beforeMount={registerBopLanguage}
@@ -421,7 +432,7 @@ export function PuzzlePlayground({
 
           {/* Error Display */}
           {error && (
-            <div className="mt-3 bg-red-900/50 border border-red-500 rounded-lg p-3 relative">
+            <div className="mt-3 bg-red-900/40 border border-red-400/50 rounded-lg p-3 relative">
               <button
                 onClick={() => setError(null)}
                 className="absolute top-2 right-2 text-red-400 hover:text-red-300 cursor-pointer"
@@ -436,7 +447,7 @@ export function PuzzlePlayground({
                     {error.message}
                   </p>
                   {error.friendly_hint && (
-                    <p className="text-amber-400 text-xs mt-1">
+                    <p className="text-amber-300 text-xs mt-1">
                       {error.friendly_hint}
                     </p>
                   )}
@@ -450,7 +461,7 @@ export function PuzzlePlayground({
             <Button
               onClick={handleRunCode}
               disabled={isRunning}
-              className="w-full h-12 text-base font-bold bg-violet-600/80 hover:bg-violet-500/90 transition-all shadow-md shadow-violet-500/20 hover:shadow-lg hover:shadow-violet-500/30"
+              className="w-full h-12 text-base font-bold"
             >
               {isRunning ? (
                 <>
@@ -477,6 +488,8 @@ export function PuzzlePlayground({
         onNextPuzzle={onNextPuzzle}
         onWorldComplete={onWorldComplete}
         onRepeatLevel={handleRepeatLevel}
+        repeatLabel={repeatLabel}
+        completionLabel={completionLabel}
         worldName={worldName}
         hasNextPuzzle={hasNextPuzzle}
         starsMet={[puzzleCompleted, ...starsMet].slice(0, 3)}

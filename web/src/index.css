@@ -1,19 +1,72 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  /* Default theme: indigo (used on home page, editor, and as fallback) */
+  --theme-300: #a5b4fc;
+  --theme-400: #818cf8;
+  --theme-500: #6366f1;
+  --theme-600: #4f46e5;
+  --theme-700: #4338ca;
+  --theme-950: #1e1b4b;
+  --theme-contrast: #18181b;
+}
+
+/* World theme overrides — applied via class on a wrapper div */
+.theme-teal {
+  --theme-300: #5eead4;
+  --theme-400: #2dd4bf;
+  --theme-500: #14b8a6;
+  --theme-600: #0d9488;
+  --theme-700: #0f766e;
+  --theme-950: #042f2e;
+  --theme-contrast: #042f2e;
+}
+
+.theme-cyan {
+  --theme-300: #67e8f9;
+  --theme-400: #22d3ee;
+  --theme-500: #06b6d4;
+  --theme-600: #0891b2;
+  --theme-700: #0e7490;
+  --theme-950: #083344;
+  --theme-contrast: #083344;
+}
+
+.theme-amber {
+  --theme-300: #fcd34d;
+  --theme-400: #fbbf24;
+  --theme-500: #f59e0b;
+  --theme-600: #d97706;
+  --theme-700: #b45309;
+  --theme-950: #451a03;
+  --theme-contrast: #451a03;
+}
+
+.theme-orange {
+  --theme-300: #fdba74;
+  --theme-400: #fb923c;
+  --theme-500: #f97316;
+  --theme-600: #ea580c;
+  --theme-700: #c2410c;
+  --theme-950: #431407;
+  --theme-contrast: #431407;
+}
+
+.theme-indigo {
+  --theme-300: #a5b4fc;
+  --theme-400: #818cf8;
+  --theme-500: #6366f1;
+  --theme-600: #4f46e5;
+  --theme-700: #4338ca;
+  --theme-950: #1e1b4b;
+  --theme-contrast: #1e1b4b;
+}
 
 @theme {
-  /* Primary brand colors — violet */
-  --color-primary-50: #f5f3ff;
-  --color-primary-100: #ede9fe;
-  --color-primary-200: #ddd6fe;
-  --color-primary-300: #c4b5fd;
-  --color-primary-400: #a78bfa;
-  --color-primary-500: #8b5cf6;
-  --color-primary-600: #7c3aed;
-  --color-primary-700: #6d28d9;
-  --color-primary-800: #5b21b6;
-  --color-primary-900: #4c1d95;
-
-  /* Success/achievement colors */
+  /* Success/achievement colors — soft mint */
   --color-success-50: #ecfdf5;
   --color-success-100: #d1fae5;
   --color-success-200: #a7f3d0;
@@ -25,7 +78,7 @@
   --color-success-800: #065f46;
   --color-success-900: #064e3b;
 
-  /* Warning/challenge colors */
+  /* Warning/challenge colors — soft gold */
   --color-warning-50: #fffbeb;
   --color-warning-100: #fef3c7;
   --color-warning-200: #fde68a;
@@ -37,11 +90,11 @@
   --color-warning-800: #92400e;
   --color-warning-900: #78350f;
 
-  /* Fun/playful accent colors */
-  --color-fun-purple: #8b5cf6;
-  --color-fun-pink: #ec4899;
-  --color-fun-orange: #f97316;
-  --color-fun-emerald: #10b981;
+  /* Fun/playful accent colors — pastels */
+  --color-fun-indigo: #818cf8;
+  --color-fun-pink: #f9a8d4;
+  --color-fun-orange: #fdba74;
+  --color-fun-emerald: #6ee7b7;
 
   /* Custom font families */
   --font-game: Inter, system-ui, sans-serif;
@@ -53,11 +106,19 @@
   --animate-level-up: levelUp 0.6s ease-out;
   --animate-achievement: achievement 0.8s ease-out;
 
-  /* Custom shadows */
-  --shadow-game: 0 4px 14px 0 rgba(139, 92, 246, 0.39);
-  --shadow-game-hover: 0 6px 20px rgba(139, 92, 246, 0.23);
-  --shadow-achievement: 0 8px 32px rgba(139, 92, 246, 0.3);
-  --shadow-glow: 0 0 20px rgba(139, 92, 246, 0.6);
+  /* Custom shadows — neutral */
+  --shadow-game: 0 4px 14px 0 rgba(0, 0, 0, 0.15);
+  --shadow-game-hover: 0 6px 20px rgba(0, 0, 0, 0.2);
+  --shadow-achievement: 0 8px 32px rgba(0, 0, 0, 0.25);
+  --shadow-glow: 0 0 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Color mode transition — only active during toggle, not on page load */
+.color-mode-transition,
+.color-mode-transition *,
+.color-mode-transition *::before,
+.color-mode-transition *::after {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease !important;
 }
 
 /* Custom keyframes */

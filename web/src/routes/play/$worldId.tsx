@@ -10,6 +10,9 @@ import {
   markLevelComplete,
   resetWorldProgress,
 } from "@/lib/progress";
+import { WORLD_THEME_CLASS } from "@/lib/theme";
+import { ColorModeToggle } from "@/components/ui/color-mode-toggle";
+import { BopIcon } from "@/components/ui/bop-icon";
 import type { PuzzleConfig, GameProgress } from "@/types/game";
 import { ArrowLeft, List, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -29,10 +32,12 @@ function PlayPage() {
   const navigate = useNavigate();
 
   const worlds = useMemo(() => getWorlds(), []);
-  const worldTitle = useMemo(
-    () => worlds.find((w) => w.world_id === worldId)?.title ?? worldId,
+  const world = useMemo(
+    () => worlds.find((w) => w.world_id === worldId),
     [worlds, worldId],
   );
+  const worldTitle = world?.title ?? worldId;
+  const themeClass = world ? WORLD_THEME_CLASS[world.theme] ?? "" : "";
 
   const levels = useMemo(() => getWorldLevels(worldId), [worldId]);
   const [currentPuzzle, setCurrentPuzzle] = useState<PuzzleConfig | null>(null);
@@ -128,45 +133,49 @@ function PlayPage() {
     currentPuzzle?.title ?? levels[currentIndex]?.title;
 
   return (
-    <div className="h-screen bg-zinc-950 flex flex-col overflow-hidden">
+    <div className={`h-screen bg-white dark:bg-zinc-950 flex flex-col overflow-hidden ${themeClass}`}>
       {/* Header */}
-      <header className="bg-gradient-to-r from-violet-500/20 via-violet-950/30 to-zinc-950 border-b border-violet-500/20 px-4 py-2 shrink-0">
+      <header className="bg-zinc-50 dark:bg-zinc-900/80 border-b border-zinc-200 dark:border-zinc-800 px-4 py-2 shrink-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => navigate({ to: "/" })}
-              className="text-zinc-400 hover:text-white gap-1.5"
+              className="gap-1.5"
             >
               <ArrowLeft className="h-4 w-4" />
               {worldTitle}
             </Button>
-            <span className="text-sm font-bold tracking-tight bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
+            <span className="flex items-center gap-1.5 text-sm font-bold tracking-tight text-indigo-400">
+              <BopIcon className="h-4 w-4" />
               bopcode
             </span>
           </div>
 
           <div className="text-center">
-            <span className="text-xs text-zinc-400">
+            <span className="text-xs text-zinc-500 dark:text-zinc-400">
               Level {currentIndex + 1} of {levels.length}
             </span>
             {currentTitle && (
-              <h1 className="text-sm font-semibold text-white leading-tight">
+              <h1 className="text-sm font-semibold text-zinc-900 dark:text-white leading-tight">
                 {currentTitle}
               </h1>
             )}
           </div>
 
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setShowLevelSelect(true)}
-            className="text-zinc-400 hover:text-white gap-1.5"
-          >
-            <List className="h-4 w-4" />
-            Levels
-          </Button>
+          <div className="flex items-center gap-1">
+            <ColorModeToggle />
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowLevelSelect(true)}
+              className="gap-1.5"
+            >
+              <List className="h-4 w-4" />
+              Levels
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -174,7 +183,7 @@ function PlayPage() {
       <main className="flex-1 min-h-0">
         {isLoading ? (
           <div className="flex items-center justify-center h-full">
-            <Loader2 className="h-8 w-8 animate-spin text-violet-500" />
+            <Loader2 className="h-8 w-8 animate-spin text-[var(--theme-600)] dark:text-[var(--theme-400)]" />
           </div>
         ) : currentPuzzle ? (
           <PuzzlePlayground
@@ -190,7 +199,7 @@ function PlayPage() {
           />
         ) : (
           <div className="flex items-center justify-center h-full">
-            <p className="text-zinc-400">No puzzles available</p>
+            <p className="text-zinc-500 dark:text-zinc-400">No puzzles available</p>
           </div>
         )}
       </main>

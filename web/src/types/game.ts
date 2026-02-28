@@ -92,6 +92,8 @@ export interface PuzzleConfig {
   starter_code: string;
   hint: string | null;
   tutorial: string | null;
+  /** Cosmetic theme for the level card/header. Not used by WASM engine. */
+  theme?: WorldTheme;
 }
 
 export type WorldTheme =

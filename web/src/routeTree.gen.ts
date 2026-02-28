@@ -9,12 +9,24 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as EditorRouteImport } from './routes/editor'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PlayCustomRouteImport } from './routes/play/custom'
 import { Route as PlayWorldIdRouteImport } from './routes/play/$worldId'
 
+const EditorRoute = EditorRouteImport.update({
+  id: '/editor',
+  path: '/editor',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlayCustomRoute = PlayCustomRouteImport.update({
+  id: '/play/custom',
+  path: '/play/custom',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PlayWorldIdRoute = PlayWorldIdRouteImport.update({
@@ -25,37 +37,59 @@ const PlayWorldIdRoute = PlayWorldIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/editor': typeof EditorRoute
   '/play/$worldId': typeof PlayWorldIdRoute
+  '/play/custom': typeof PlayCustomRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/editor': typeof EditorRoute
   '/play/$worldId': typeof PlayWorldIdRoute
+  '/play/custom': typeof PlayCustomRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/editor': typeof EditorRoute
   '/play/$worldId': typeof PlayWorldIdRoute
+  '/play/custom': typeof PlayCustomRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/play/$worldId'
+  fullPaths: '/' | '/editor' | '/play/$worldId' | '/play/custom'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/play/$worldId'
-  id: '__root__' | '/' | '/play/$worldId'
+  to: '/' | '/editor' | '/play/$worldId' | '/play/custom'
+  id: '__root__' | '/' | '/editor' | '/play/$worldId' | '/play/custom'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  EditorRoute: typeof EditorRoute
   PlayWorldIdRoute: typeof PlayWorldIdRoute
+  PlayCustomRoute: typeof PlayCustomRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/editor': {
+      id: '/editor'
+      path: '/editor'
+      fullPath: '/editor'
+      preLoaderRoute: typeof EditorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/play/custom': {
+      id: '/play/custom'
+      path: '/play/custom'
+      fullPath: '/play/custom'
+      preLoaderRoute: typeof PlayCustomRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/play/$worldId': {
@@ -70,7 +104,9 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  EditorRoute: EditorRoute,
   PlayWorldIdRoute: PlayWorldIdRoute,
+  PlayCustomRoute: PlayCustomRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
