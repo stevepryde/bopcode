@@ -144,3 +144,7 @@ Cargo.lock
 
 # WASM build output
 web/src/wasm/
+
+# TanStack Router generated files
+web/src/routeTree.gen.ts
+web/.tanstack/
