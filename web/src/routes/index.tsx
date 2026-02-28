@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Star, Pencil, Upload, X, Globe, Lock, Zap } from "lucide-react";
+import { Star, Pencil, Upload, X } from "lucide-react";
 import { useMemo, useState, useRef } from "react";
 import { getWorlds, getWorldLevels } from "@/lib/wasm";
 import { getProgress } from "@/lib/progress";
@@ -98,42 +98,15 @@ function HomePage() {
                     <h2 className="text-3xl font-bold mb-3">
                         Learn to code by solving puzzles
                     </h2>
-                    <p className="text-zinc-500 dark:text-zinc-400 text-lg max-w-2xl mb-6">
-                        bopcode teaches programming fundamentals through a simple language
-                        called Bop. Write code to guide a bot through grid-based puzzles,
-                        building real skills you'll carry into Python, JavaScript, and
-                        beyond.
+                    <p className="text-zinc-500 dark:text-zinc-400 text-lg max-w-2xl">
+                        Bop is a small language designed to introduce you to programming with
+                        real code. You'll learn the fundamentals of programming and start
+                        to think like a software developer. No coding experience required.
                     </p>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-2xl">
-                        <div className="flex items-start gap-3 p-3 rounded-lg bg-zinc-50 dark:bg-zinc-900/50">
-                            <Zap className="h-5 w-5 text-amber-500 mt-0.5 shrink-0" />
-                            <div>
-                                <p className="text-sm font-medium">No setup needed</p>
-                                <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                                    Runs entirely in your browser. No installs, no accounts.
-                                </p>
-                            </div>
-                        </div>
-                        <div className="flex items-start gap-3 p-3 rounded-lg bg-zinc-50 dark:bg-zinc-900/50">
-                            <Lock className="h-5 w-5 text-teal-500 mt-0.5 shrink-0" />
-                            <div>
-                                <p className="text-sm font-medium">Completely private</p>
-                                <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                                    No tracking, no data collection. Your code stays on your
-                                    device.
-                                </p>
-                            </div>
-                        </div>
-                        <div className="flex items-start gap-3 p-3 rounded-lg bg-zinc-50 dark:bg-zinc-900/50">
-                            <Globe className="h-5 w-5 text-indigo-500 mt-0.5 shrink-0" />
-                            <div>
-                                <p className="text-sm font-medium">100% free</p>
-                                <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                                    No paywalls, no ads. Just puzzles and code.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+                    <p className="text-zinc-500 dark:text-zinc-400 text-lg max-w-2xl mt-4">
+                        Everything runs entirely in your browser. There are no requests
+                        to other servers, no tracking, no ads, and it's completely free.
+                    </p>
                 </div>
 
                 {/* Worlds Grid */}
