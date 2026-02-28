@@ -3,6 +3,12 @@ import { Play, Pause, SkipForward, RotateCcw, AlertTriangle, MessageSquareText, 
 import { Button } from "@/components/ui/button";
 import type { PlaybackSpeed } from "@/types/game";
 
+interface Inventory {
+  gems: number;
+  diamonds: number;
+  keys: number;
+}
+
 interface PlaybackControlsProps {
   isPlaying: boolean;
   onPlay: () => void;
@@ -14,6 +20,7 @@ interface PlaybackControlsProps {
   currentAction: number;
   totalActions: number;
   disabled?: boolean;
+  inventory?: Inventory;
   warnings?: string[];
   outputs?: string[];
 }
@@ -31,6 +38,7 @@ export function PlaybackControls({
   currentAction,
   totalActions,
   disabled = false,
+  inventory,
   warnings = [],
   outputs = [],
 }: PlaybackControlsProps) {
@@ -111,6 +119,41 @@ export function PlaybackControls({
             "No actions"
           )}
         </div>
+
+        {/* Inventory */}
+        {inventory && (inventory.gems > 0 || inventory.diamonds > 0 || inventory.keys > 0) && (
+          <>
+            <div className="w-px h-5 bg-zinc-300 dark:bg-zinc-700 mx-0.5" />
+            <div className="flex items-center gap-2">
+              {inventory.gems > 0 && (
+                <div className="flex items-center gap-1" title="Gems held">
+                  <svg viewBox="0 0 12 12" className="h-3.5 w-3.5">
+                    <polygon points="6,1 11,4 11,8 6,11 1,8 1,4" fill="#d8b4fe" stroke="#e9d5ff" strokeWidth="0.5" />
+                  </svg>
+                  <span className="text-xs font-medium text-purple-300">{inventory.gems}</span>
+                </div>
+              )}
+              {inventory.diamonds > 0 && (
+                <div className="flex items-center gap-1" title="Diamonds held">
+                  <svg viewBox="0 0 12 12" className="h-3.5 w-3.5">
+                    <polygon points="6,1 11,6 6,11 1,6" fill="#7dd3fc" stroke="#bae6fd" strokeWidth="0.5" />
+                  </svg>
+                  <span className="text-xs font-medium text-sky-300">{inventory.diamonds}</span>
+                </div>
+              )}
+              {inventory.keys > 0 && (
+                <div className="flex items-center gap-1" title="Keys held">
+                  <svg viewBox="0 0 12 12" className="h-3.5 w-3.5">
+                    <circle cx="4" cy="4" r="2.5" fill="none" stroke="#fde68a" strokeWidth="1.5" />
+                    <line x1="6" y1="4" x2="11" y2="4" stroke="#fde68a" strokeWidth="1.5" />
+                    <line x1="9" y1="4" x2="9" y2="6.5" stroke="#fde68a" strokeWidth="1.5" />
+                  </svg>
+                  <span className="text-xs font-medium text-yellow-300">{inventory.keys}</span>
+                </div>
+              )}
+            </div>
+          </>
+        )}
 
         {/* Output & warning indicators */}
         {(outputs.length > 0 || warnings.length > 0) && (

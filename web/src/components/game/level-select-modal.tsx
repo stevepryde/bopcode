@@ -194,8 +194,14 @@ function LevelCard({
       </div>
 
       {/* Info */}
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2">
+      <div className="flex-1 min-w-0 self-stretch flex flex-col">
+        <p className="text-sm font-semibold text-zinc-900 dark:text-white truncate">
+          {level.title}
+        </p>
+        <p className="text-xs text-zinc-400 line-clamp-2">
+          {level.description}
+        </p>
+        <div className="flex items-center gap-2 mt-auto pt-1">
           <span className="text-xs font-medium text-zinc-400">
             Level {index + 1}
           </span>
@@ -218,12 +224,6 @@ function LevelCard({
             <span className="text-xs text-[var(--theme-700)] dark:text-[var(--theme-400)]">Current</span>
           )}
         </div>
-        <p className="text-sm font-semibold text-zinc-900 dark:text-white truncate">
-          {level.title}
-        </p>
-        <p className="text-xs text-zinc-400 line-clamp-2">
-          {level.description}
-        </p>
       </div>
 
       {/* Lock icon for locked levels */}

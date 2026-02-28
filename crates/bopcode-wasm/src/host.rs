@@ -1,8 +1,8 @@
 use bop::{BopError, BopHost, Value};
 
 use crate::models::{
-    BotState, Direction, GameAction, Grid, Position, PuzzleObjective, SimulationError, TileItem,
-    TileType,
+    BotState, Direction, GameAction, GameActionKind, Grid, Position, PuzzleObjective,
+    SimulationError, TileItem, TileType,
 };
 
 pub struct BopCodeHost {
@@ -16,9 +16,16 @@ pub struct BopCodeHost {
 }
 
 impl BopCodeHost {
+    fn emit(&mut self, line: u32, action: GameActionKind) {
+        self.actions.push(GameAction {
+            line: Some(line),
+            action,
+        });
+    }
+
     fn halt_with_error(&mut self, line: u32, message: impl Into<String>, hint: impl Into<String>) {
         let message = message.into();
-        self.actions.push(GameAction::Error {
+        self.emit(line, GameActionKind::Error {
             message: message.clone(),
         });
         self.halt_error = Some(SimulationError {
@@ -121,7 +128,7 @@ impl BopCodeHost {
         match tile {
             None => {
                 self.bot.direction = direction;
-                self.actions.push(GameAction::Bump {
+                self.emit(line, GameActionKind::Bump {
                     position: from,
                     direction,
                     message: "Bonk! The path is blocked.".into(),
@@ -131,7 +138,7 @@ impl BopCodeHost {
             Some(t) => match t.tile_type {
                 TileType::Wall => {
                     self.bot.direction = direction;
-                    self.actions.push(GameAction::Bump {
+                    self.emit(line, GameActionKind::Bump {
                         position: from,
                         direction,
                         message: "Bonk! The path is blocked.".into(),
@@ -144,7 +151,7 @@ impl BopCodeHost {
                         if let Some(tile) = self.grid.get_tile_mut(to) {
                             tile.tile_type = TileType::Floor;
                         }
-                        self.actions.push(GameAction::Unlock { position: to });
+                        self.emit(line, GameActionKind::Unlock { position: to });
                     } else {
                         self.halt_with_error(
                             line,
@@ -163,7 +170,7 @@ impl BopCodeHost {
         // Execute the move
         self.bot.position = to;
         self.bot.direction = direction;
-        self.actions.push(GameAction::Move {
+        self.emit(line, GameActionKind::Move {
             from,
             to,
             direction,
@@ -173,7 +180,7 @@ impl BopCodeHost {
         let tile_type = self.grid.get_tile(to).map(|t| t.tile_type);
 
         if tile_type == Some(TileType::Pit) {
-            self.actions.push(GameAction::FallIntoPit { position: to });
+            self.emit(line, GameActionKind::FallIntoPit { position: to });
             self.halt_with_error(
                 line,
                 "Fell into a pit!",
@@ -205,7 +212,7 @@ impl BopCodeHost {
             }
         };
         self.bot.direction = to;
-        self.actions.push(GameAction::Turn { from, to });
+        self.emit(line, GameActionKind::Turn { from, to });
         Ok(Value::None)
     }
 
@@ -217,19 +224,18 @@ impl BopCodeHost {
                 Some(TileItem::Gem) => {
                     tile.item = None;
                     self.bot.gems += 1;
-                    self.bot.gems_collected += 1;
-                    self.actions.push(GameAction::Grab { position: pos });
+                    self.emit(line, GameActionKind::Grab { position: pos });
                     self.check_objectives();
                 }
                 Some(TileItem::Key) => {
                     tile.item = None;
                     self.bot.keys += 1;
-                    self.actions.push(GameAction::Grab { position: pos });
+                    self.emit(line, GameActionKind::Grab { position: pos });
                 }
                 Some(TileItem::Diamond) => {
                     tile.item = None;
                     self.bot.diamonds += 1;
-                    self.actions.push(GameAction::Grab { position: pos });
+                    self.emit(line, GameActionKind::Grab { position: pos });
                 }
                 None => {
                     self.halt_with_error(
@@ -253,7 +259,7 @@ impl BopCodeHost {
                 if self.bot.gems > 0 {
                     self.bot.gems -= 1;
                     self.bot.gems_deposited += 1;
-                    self.actions.push(GameAction::Deposit {
+                    self.emit(line, GameActionKind::Deposit {
                         position: pos,
                         item: TileItem::Gem,
                     });
@@ -270,7 +276,7 @@ impl BopCodeHost {
                 if self.bot.diamonds > 0 {
                     self.bot.diamonds -= 1;
                     self.bot.diamonds_deposited += 1;
-                    self.actions.push(GameAction::Deposit {
+                    self.emit(line, GameActionKind::Deposit {
                         position: pos,
                         item: TileItem::Diamond,
                     });
@@ -296,7 +302,7 @@ impl BopCodeHost {
                         }
                         tile.item = Some(TileItem::Gem);
                         self.bot.gems -= 1;
-                        self.actions.push(GameAction::Drop { position: pos });
+                        self.emit(line, GameActionKind::Drop { position: pos });
                         self.check_objectives();
                     }
                 } else {
@@ -315,7 +321,7 @@ impl BopCodeHost {
         self.expect_args("say", args, 1, line)?;
         let message = format!("{}", args[0]);
         self.bot.message = Some(message.clone());
-        self.actions.push(GameAction::Say { message });
+        self.emit(line, GameActionKind::Say { message });
         Ok(Value::None)
     }
 
@@ -324,7 +330,7 @@ impl BopCodeHost {
         match &args[0] {
             Value::Number(n) => {
                 let ticks = (*n as i64).clamp(1, 100) as u32;
-                self.actions.push(GameAction::Wait { ticks });
+                self.emit(line, GameActionKind::Wait { ticks });
             }
             _ => return Err(self.error(line, "wait needs a number")),
         }
@@ -486,7 +492,34 @@ impl BopCodeHost {
 
     fn builtin_inventory(&self, args: &[Value], line: u32) -> Result<Value, BopError> {
         self.expect_args("inventory", args, 0, line)?;
-        Ok(Value::Number(self.bot.gems_collected as f64))
+        Ok(Value::new_dict(vec![
+            ("gems".to_string(), Value::Number(self.bot.gems as f64)),
+            ("diamonds".to_string(), Value::Number(self.bot.diamonds as f64)),
+            ("keys".to_string(), Value::Number(self.bot.keys as f64)),
+        ]))
+    }
+
+    fn builtin_inventory_count(&self, args: &[Value], line: u32) -> Result<Value, BopError> {
+        self.expect_args("inventory_count", args, 1, line)?;
+        let item_type = match &args[0] {
+            Value::Str(s) => s.to_lowercase(),
+            _ => return Err(self.error(line, "inventory_count needs a string item type")),
+        };
+        let count = match item_type.as_str() {
+            "gems" => self.bot.gems,
+            "diamonds" => self.bot.diamonds,
+            "keys" => self.bot.keys,
+            _ => {
+                return Err(self.error(
+                    line,
+                    format!(
+                        "Unknown item type '{}'. Use \"gems\", \"diamonds\", or \"keys\"",
+                        item_type
+                    ),
+                ))
+            }
+        };
+        Ok(Value::Number(count as f64))
     }
 
     fn builtin_grid_size(&self, args: &[Value], line: u32) -> Result<Value, BopError> {
@@ -525,6 +558,7 @@ impl BopHost for BopCodeHost {
             "has_key" => self.builtin_has_key(args, line),
             "has_diamond" => self.builtin_has_diamond(args, line),
             "inventory" => self.builtin_inventory(args, line),
+            "inventory_count" => self.builtin_inventory_count(args, line),
             "grid_size" => self.builtin_grid_size(args, line),
             _ => return None,
         };
@@ -532,8 +566,11 @@ impl BopHost for BopCodeHost {
     }
 
     fn on_print(&mut self, message: &str) {
-        self.actions.push(GameAction::Say {
-            message: message.to_string(),
+        self.actions.push(GameAction {
+            line: None,
+            action: GameActionKind::Say {
+                message: message.to_string(),
+            },
         });
     }
 

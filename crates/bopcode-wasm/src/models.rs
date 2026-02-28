@@ -207,8 +207,6 @@ pub struct BotState {
     #[serde(default)]
     pub diamonds_deposited: u32,
     pub message: Option<String>,
-    #[serde(default)]
-    pub gems_collected: u32,
 }
 
 impl BotState {
@@ -222,14 +220,19 @@ impl BotState {
             gems_deposited: 0,
             diamonds_deposited: 0,
             message: None,
-            gems_collected: 0,
         }
     }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GameAction {
+    pub line: Option<u32>,
+    pub action: GameActionKind,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "type", rename_all = "snake_case")]
-pub enum GameAction {
+pub enum GameActionKind {
     Move {
         from: Position,
         to: Position,

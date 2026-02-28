@@ -32,7 +32,6 @@ export function createDefaultConfig(): PuzzleConfig {
       gems_deposited: 0,
       diamonds_deposited: 0,
       message: null,
-      gems_collected: 0,
     },
     completion: { type: "reach_position", x: width - 1, y: height - 1 },
     star_objectives: [],

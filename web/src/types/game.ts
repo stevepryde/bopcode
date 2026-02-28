@@ -41,10 +41,9 @@ export interface BotState {
   gems_deposited: number;
   diamonds_deposited: number;
   message: string | null;
-  gems_collected: number;
 }
 
-export type GameAction =
+export type GameActionKind =
   | { type: "move"; from: Position; to: Position; direction: Direction }
   | { type: "turn"; from: Direction; to: Direction }
   | { type: "grab"; position: Position }
@@ -56,6 +55,11 @@ export type GameAction =
   | { type: "unlock"; position: Position }
   | { type: "deposit"; position: Position; item: TileItem }
   | { type: "bump"; position: Position; direction: Direction; message: string };
+
+export interface GameAction {
+  line: number | null;
+  action: GameActionKind;
+}
 
 export interface SimulationError {
   line: number | null;

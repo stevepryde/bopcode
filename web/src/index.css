@@ -149,6 +149,14 @@
   to { opacity: 1; }
 }
 
+/* Monaco editor: highlighted line during playback */
+.highlighted-line {
+  background-color: rgba(99, 102, 241, 0.15);
+}
+.dark .highlighted-line {
+  background-color: rgba(129, 140, 248, 0.12);
+}
+
 /* iOS viewport fix */
 @supports (-webkit-touch-callout: none) {
   .h-screen {

@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef, useLayoutEffect, useMemo } from "react";
-import Editor from "@monaco-editor/react";
+import Editor, { type OnMount } from "@monaco-editor/react";
 import { Button } from "@/components/ui/button";
 import { GameGrid } from "./game-grid";
 import { PlaybackControls } from "./playback-controls";
@@ -16,6 +16,7 @@ import type {
   BotState,
   Grid,
   GameAction,
+  GameActionKind,
   SimulationError,
   PlaybackSpeed,
 } from "@/types/game";
@@ -86,15 +87,20 @@ export function PuzzlePlayground({
   const simulationErrorRef = useRef<SimulationError | null>(null);
   const saveTimerRef = useRef<number | null>(null);
 
+  // Monaco editor ref for line highlighting
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const editorRef = useRef<any>(null);
+  const decorationsRef = useRef<string[]>([]);
+
   // Collect outputs from say actions
   const outputs = useMemo(
-    () => actions.filter((a) => a.type === "say").map((a) => a.type === "say" ? a.message : ""),
+    () => actions.filter((a) => a.action.type === "say").map((a) => a.action.type === "say" ? a.action.message : ""),
     [actions],
   );
 
   // Collect warnings from bump actions
   const warnings = useMemo(
-    () => actions.filter((a) => a.type === "bump").map((a) => a.type === "bump" ? a.message : ""),
+    () => actions.filter((a) => a.action.type === "bump").map((a) => a.action.type === "bump" ? a.action.message : ""),
     [actions],
   );
 
@@ -202,20 +208,20 @@ export function PuzzlePlayground({
       const action = actions[i];
       if (action) {
         // When we reach an error action, show the structured error and stop
-        if (action.type === "error") {
+        if (action.action.type === "error") {
           setIsPlaying(false);
           setError(
             simulationErrorRef.current ?? {
               line: null,
               column: null,
-              message: action.message,
+              message: action.action.message,
               friendly_hint: null,
             }
           );
           break;
         }
         newBotState.message = null;
-        applyAction(action, newBotState, newGrid);
+        applyAction(action.action, newBotState, newGrid);
       }
     }
 
@@ -316,6 +322,36 @@ export function PuzzlePlayground({
   const colorMode = useColorMode();
   const monacoTheme = colorMode === "dark" ? "vs-dark" : "vs";
 
+  const handleEditorMount: OnMount = (editor) => {
+    editorRef.current = editor;
+  };
+
+  // Highlight the current line in the editor during playback
+  useEffect(() => {
+    const editor = editorRef.current;
+    if (!editor) return;
+
+    // Find the line for the current action (look at the action just played)
+    const actionIndex = currentActionIndex - 1;
+    const action = actionIndex >= 0 ? actions[actionIndex] : undefined;
+    const line = action?.line;
+
+    if (line && line > 0) {
+      decorationsRef.current = editor.deltaDecorations(decorationsRef.current, [
+        {
+          range: { startLineNumber: line, startColumn: 1, endLineNumber: line, endColumn: 1 },
+          options: {
+            isWholeLine: true,
+            className: "highlighted-line",
+          },
+        },
+      ]);
+      editor.revealLineInCenterIfOutsideViewport(line);
+    } else {
+      decorationsRef.current = editor.deltaDecorations(decorationsRef.current, []);
+    }
+  }, [currentActionIndex, actions]);
+
   return (
     <div className="flex flex-col h-full bg-white dark:bg-zinc-950 relative">
       {/* Main playground area */}
@@ -415,6 +451,7 @@ export function PuzzlePlayground({
                   currentAction={currentActionIndex}
                   totalActions={actions.length}
                   disabled={isRunning}
+                  inventory={{ gems: botState.gems, diamonds: botState.diamonds, keys: botState.keys }}
                   outputs={outputs}
                   warnings={warnings}
                 />
@@ -434,6 +471,7 @@ export function PuzzlePlayground({
               value={code}
               onChange={(val) => setCode(val ?? "")}
               beforeMount={registerBopLanguage}
+              onMount={handleEditorMount}
               options={{
                 minimap: { enabled: false },
                 lineNumbers: "on",
@@ -514,7 +552,7 @@ export function PuzzlePlayground({
 }
 
 // Helper function to apply an action to bot state and grid
-function applyAction(action: GameAction, bot: BotState, grid: Grid) {
+function applyAction(action: GameActionKind, bot: BotState, grid: Grid) {
   switch (action.type) {
     case "move":
       bot.position = action.to;
@@ -530,7 +568,7 @@ function applyAction(action: GameAction, bot: BotState, grid: Grid) {
         if (grabTile) {
           if (grabTile.item === "key") bot.keys += 1;
           else if (grabTile.item === "diamond") bot.diamonds += 1;
-          else { bot.gems += 1; bot.gems_collected += 1; }
+          else bot.gems += 1;
           grabTile.item = undefined;
         }
       }

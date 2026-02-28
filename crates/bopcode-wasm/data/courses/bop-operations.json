@@ -19,8 +19,8 @@
             ],
             "completion": "reach_goal",
             "stars": {
-                "max_instructions": 12,
-                "max_steps": 12
+                "max_instructions": 4,
+                "max_steps": 10
             },
             "starter_code": "move(\"right\")\n",
             "hint": "Pick up the key first. A locked door consumes one key when you step onto it.",
@@ -41,8 +41,8 @@
             ],
             "completion": "reach_goal",
             "stars": {
-                "max_instructions": 28,
-                "max_steps": 24
+                "max_instructions": 20,
+                "max_steps": 40
             },
             "starter_code": "if key_here() { grab() }\n",
             "hint": "Collect the keys in the right order.",
@@ -64,8 +64,8 @@
             ],
             "completion": "reach_goal",
             "stars": {
-                "max_instructions": 18,
-                "max_steps": 15
+                "max_instructions": 4,
+                "max_steps": 12
             },
             "starter_code": "while path_ahead() {\n    move(\"right\")\n}\n",
             "hint": "Pits are walkable in path checks but fatal on entry. Consider checking `pit_ahead()` before moving.",
@@ -77,18 +77,18 @@
             "description": "Collect a key, cross a gated chokepoint, and avoid the pit lane.",
             "map": [
                 "#############",
-                "#S....P....G#",
-                "#.....P..P..#",
-                "#.....PP.P..#",
-                "#.....D..P..#",
-                "#..PPPPP.P..#",
-                "#....KP.....#",
+                "#S.....P.P.G#",
+                "#P..PP.PP..P#",
+                "#PPK.PPP..PP#",
+                "#PPP..D..PP.#",
+                "#..P.PP..P..#",
+                "#....P......#",
                 "#############"
             ],
             "completion": "reach_goal",
             "stars": {
-                "max_instructions": 26,
-                "max_steps": 20
+                "max_instructions": 10,
+                "max_steps": 18
             },
             "starter_code": "if key_here() { grab() }\n",
             "hint": "Use pit_ahead() to check for pits.",
@@ -118,12 +118,12 @@
                 ]
             },
             "stars": {
-                "max_instructions": 20,
-                "max_steps": 18
+                "max_instructions": 10,
+                "max_steps": 16
             },
             "starter_code": "if diamond_here() { grab() }\n",
             "hint": "`drop()` deposits one item at the matching vault tile.",
-            "tutorial": "# Diamond Vaults\nPick up diamonds with `grab()`. Stand on a diamond vault (`W`) and call `drop()` to deposit."
+            "tutorial": "# Diamond Vaults\nPick up diamonds with `grab()`. Stand on a diamond vault and call `drop()` to deposit."
         },
         {
             "level_id": "bop-int-06",
@@ -131,7 +131,7 @@
             "description": "Collect two diamonds, deposit both, then route to the finish.",
             "map": [
                 "###############",
-                "#S..R.....P..G#",
+                "#S.R......P..G#",
                 "#........P....#",
                 "#...#####P....#",
                 "#..R....W.....#",
@@ -150,8 +150,8 @@
                 ]
             },
             "stars": {
-                "max_instructions": 34,
-                "max_steps": 26
+                "max_instructions": 14,
+                "max_steps": 22
             },
             "starter_code": "if diamond_here() { grab() }\n",
             "hint": "You can carry multiple diamonds. Deposit each one with `drop()`.",

@@ -156,12 +156,19 @@ fn parse_course_pack(data: &str, file_name: &str) -> ParsedCoursePack {
 fn parse_course_level(level: CourseLevelData) -> PuzzleConfig {
     let (grid, bot_start, goal_position) = parse_ascii_map(&level.level_id, &level.map);
 
-    let completion = parse_course_completion(&level.level_id, level.completion, goal_position);
+    let mut completion = parse_course_completion(&level.level_id, level.completion, goal_position);
+
+    // If collect_all_gems is specified, fold it into the completion objective
+    if level.stars.collect_all_gems {
+        let already_requires_gems = completion_requires_collect_all_gems(&completion);
+        if !already_requires_gems {
+            completion = PuzzleObjective::All {
+                conditions: vec![completion, PuzzleObjective::CollectAllGems],
+            };
+        }
+    }
 
     let mut star_objectives = Vec::new();
-    if level.stars.collect_all_gems {
-        star_objectives.push(PuzzleObjective::CollectAllGems);
-    }
     if let Some(instructions) = level.stars.max_instructions {
         star_objectives.push(PuzzleObjective::MaxInstructions { instructions });
     }
@@ -180,6 +187,16 @@ fn parse_course_level(level: CourseLevelData) -> PuzzleConfig {
         starter_code: level.starter_code,
         hint: level.hint,
         tutorial: level.tutorial,
+    }
+}
+
+fn completion_requires_collect_all_gems(objective: &PuzzleObjective) -> bool {
+    match objective {
+        PuzzleObjective::CollectAllGems => true,
+        PuzzleObjective::All { conditions } => {
+            conditions.iter().any(completion_requires_collect_all_gems)
+        }
+        _ => false,
     }
 }
 

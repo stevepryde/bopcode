@@ -1,214 +1,283 @@
 {
-  "world": {
-    "world_id": "first-steps",
-    "title": "First Steps",
-    "description": "A faster introduction to Bop for learners who want to move quickly.",
-    "story_intro": "Move fast through Bop fundamentals with 14 compact challenges.",
-    "theme": "grassy_plains",
-    "sort_order": 10
-  },
-  "levels": [
-    {
-      "level_id": "puzzle-1",
-      "title": "Walk to the Goal",
-      "description": "Help the bot reach the glowing goal tile! Use the move() function with a direction.",
-      "map": ["S......G"],
-      "completion": "reach_goal",
-      "stars": { "max_instructions": 7, "max_steps": 7 },
-      "starter_code": "// Move the bot to the goal!\n// Use: move(\"right\") to move right\n\nmove(\"right\")\n",
-      "hint": "You need to move right 7 times to reach the goal.",
-      "tutorial": "# Welcome to First Steps!\n\nYou control a **bot** on a grid by writing code. Your goal is to guide the bot to the **green goal tile**.\n\n## Your first command: `move()`\n\nThe `move()` function moves the bot one tile in a direction:\n\n```\nmove(\"right\")\nmove(\"left\")\nmove(\"up\")\nmove(\"down\")\n```\n\nEach `move()` call moves the bot **one step**. To move multiple tiles, call `move()` multiple times.\n\n## Your mission\n\nThe goal tile is 7 steps to the right. Write enough `move(\"right\")` calls to get there!\n"
+    "world": {
+        "world_id": "first-steps",
+        "title": "Fast Learner",
+        "description": "A faster introduction to Bop for learners who want to move quickly.",
+        "story_intro": "Move fast through Bop fundamentals with 14 compact challenges.",
+        "theme": "grassy_plains",
+        "sort_order": 10
     },
-    {
-      "level_id": "puzzle-2",
-      "title": "Collect the Gem",
-      "description": "Grab the gem and then reach the goal! Use grab() when standing on a gem.",
-      "map": ["S...*..G"],
-      "completion": "reach_goal",
-      "stars": { "collect_all_gems": true, "max_instructions": 10, "max_steps": 10 },
-      "starter_code": "// Collect the gem and reach the goal!\n// Use: grab() to pick up a gem when standing on it\n\nmove(\"right\")\n",
-      "hint": "Move to the gem first, grab() it, then continue to the goal.",
-      "tutorial": "# Collecting Gems\n\nSome tiles have **gems** on them. You can pick them up with the `grab()` function.\n\n## How `grab()` works\n\nWhen your bot is standing on a tile with a gem, call:\n\n```\ngrab()\n```\n\nThis picks up the gem. If there's no gem on the tile, `grab()` will cause an error — so only use it when you're on a gem!\n\n## Sequencing instructions\n\nYour code runs **top to bottom**, one instruction at a time:\n\n```\nmove(\"right\")   // step 1\nmove(\"right\")   // step 2\ngrab()           // step 3\nmove(\"right\")   // step 4\n```\n\n## Your mission\n\nMove to the gem, grab it, then continue to the goal.\n"
-    },
-    {
-      "level_id": "puzzle-3",
-      "title": "Around the Wall",
-      "description": "There's a wall in the way! Navigate around it to collect the gem and reach the goal.",
-      "map": [
-        "........",
-        "........",
-        "....#...",
-        "....#...",
-        "S...#.*G",
-        "....#...",
-        "....#...",
-        "........"
-      ],
-      "completion": "reach_goal",
-      "stars": { "collect_all_gems": true, "max_instructions": 14, "max_steps": 16 },
-      "starter_code": "// Navigate around the wall!\n// Use: move(\"up\"), move(\"down\"), move(\"left\"), move(\"right\")\n\nmove(\"right\")\n",
-      "hint": "Move up to get around the wall, then right, then down to the gem.",
-      "tutorial": "# Navigating in All Directions\n\nSo far you've moved right. But the grid is 2D — you can move in **all four directions**:\n\n```\nmove(\"up\")\nmove(\"down\")\nmove(\"left\")\nmove(\"right\")\n```\n\n## Walls\n\nGrey tiles are **walls** — you can't walk through them. If you try, you'll get an error. You need to find a path *around* walls.\n\n## Planning a path\n\nLook at the grid and plan your route:\n1. Which direction gets you closer to the goal?\n2. If there's a wall, how can you go around it?\n\n## Your mission\n\nThere's a wall blocking your path. Navigate around it, collect the gem, and reach the goal.\n"
-    },
-    {
-      "level_id": "puzzle-4",
-      "title": "Repeat After Me",
-      "description": "That's a long corridor! Instead of writing move() seven times, use repeat to do it in one line.",
-      "map": ["S...*..G"],
-      "completion": "reach_goal",
-      "stars": { "collect_all_gems": true, "max_instructions": 5, "max_steps": 9 },
-      "starter_code": "// Use repeat to move efficiently!\n// repeat N { ... } runs the code N times\n// Example: repeat 3 { say(\"hi\") }\n\nmove(\"right\")\n",
-      "hint": "Try: repeat 7 { move(\"right\") }",
-      "tutorial": "# Loops: `repeat`\n\nWriting `move(\"right\")` seven times works, but there's a better way!\n\n## The `repeat` block\n\n`repeat` runs the same code multiple times:\n\n```\nrepeat 3 {\n    move(\"right\")\n}\n```\n\nThis is the same as writing `move(\"right\")` three times — but much shorter!\n\n## How it works\n\n- `repeat N { ... }` runs the code inside the braces **N times**\n- N can be any whole number\n- The code inside the `{ }` can be any instructions\n\n## Your mission\n\nUse `repeat` to reach the goal without writing `move()` seven separate times. Don't forget the gem!\n"
-    },
-    {
-      "level_id": "puzzle-5",
-      "title": "Gem Trail",
-      "description": "A trail of gems leads to the goal. Collect them all using a loop!",
-      "map": ["S******G"],
-      "completion": "reach_goal",
-      "stars": { "collect_all_gems": true, "max_instructions": 4, "max_steps": 14 },
-      "starter_code": "// Collect all gems on the way to the goal!\n// Put multiple actions inside a repeat block\n\nmove(\"right\")\n",
-      "hint": "Try: repeat 6 { move(\"right\") grab() } then one more move.",
-      "tutorial": "# Multiple Actions in Loops\n\nA `repeat` block can contain **more than one instruction**:\n\n```\nrepeat 3 {\n    move(\"right\")\n    grab()\n}\n```\n\nThis moves right **and** grabs, three times in a row. The bot does both actions in order, then repeats.\n\n## Think in patterns\n\nLook at the grid — is there a repeating pattern? If the bot needs to \"move then grab\" over and over, that's a perfect loop body.\n\n## Your mission\n\nThere's a trail of gems leading to the goal. Use a loop with multiple actions to collect them all efficiently.\n"
-    },
-    {
-      "level_id": "puzzle-6",
-      "title": "The L-Shape",
-      "description": "Follow the L-shaped corridor to the goal. You'll need two repeat blocks!",
-      "map": [
-        "S....*",
-        "#####.",
-        "#####.",
-        "#####.",
-        "#####.",
-        "#####G"
-      ],
-      "completion": "reach_goal",
-      "stars": { "collect_all_gems": true, "max_instructions": 5, "max_steps": 11 },
-      "starter_code": "// Navigate the L-shaped path!\n// Use two repeat blocks — one for each direction\n\nmove(\"right\")\n",
-      "hint": "Move right 5 times, then down 5 times.",
-      "tutorial": "# Multiple Repeat Blocks\n\nYou're not limited to a single loop! You can use **multiple repeat blocks** in sequence:\n\n```\nrepeat 5 { move(\"right\") }\nrepeat 3 { move(\"down\") }\n```\n\nThe first loop runs to completion, then the second loop starts.\n\n## Sequencing loops\n\nThink of each loop as one \"section\" of your path. When the path changes direction, start a new loop.\n\n## Your mission\n\nThe corridor turns from horizontal to vertical. Use two repeat blocks — one for each direction — and don't forget the gem at the corner!\n"
-    },
-    {
-      "level_id": "puzzle-7",
-      "title": "While You Can",
-      "description": "Walk forward until you hit a wall! Use while and path_ahead() to stop automatically.",
-      "map": [
-        "######",
-        "S...G#",
-        "######"
-      ],
-      "completion": "reach_goal",
-      "stars": { "max_instructions": 4, "max_steps": 6 },
-      "starter_code": "// Use while to keep moving until blocked!\n// path_ahead() returns true if you can move forward\n// wall_ahead() returns true if there's a wall ahead\n\nmove(\"right\")\n",
-      "hint": "Try: while path_ahead() { move(\"right\") }",
-      "tutorial": "# While Loops and Sensors\n\nSometimes you don't know *exactly* how many steps to take. That's where `while` loops come in!\n\n## The `while` loop\n\nA `while` loop keeps running as long as its condition is **true**:\n\n```\nwhile path_ahead() {\n    move(\"right\")\n}\n```\n\nThis moves right until there's no more path ahead.\n\n## Sensors\n\nYour bot has built-in sensors that return `true` or `false`:\n\n| Sensor | Returns `true` when... |\n|---|---|\n| `path_ahead()` | The tile ahead is walkable |\n| `wall_ahead()` | The tile ahead is a wall |\n\n## `while` vs `repeat`\n\n- Use `repeat N` when you know the exact count\n- Use `while condition` when you want to keep going until something changes\n\n## Your mission\n\nWalk forward until you hit a wall. Use `while` and a sensor to stop automatically!\n"
-    },
-    {
-      "level_id": "puzzle-8",
-      "title": "Check Before You Grab",
-      "description": "Some tiles have gems, some don't. Use if and gem_here() to grab only when there's a gem!",
-      "map": ["S*.*.*.G"],
-      "completion": "reach_goal",
-      "stars": { "collect_all_gems": true, "max_instructions": 5, "max_steps": 11 },
-      "starter_code": "// Grab gems only where they exist!\n// gem_here() returns true if there's a gem on your tile\n// if gem_here() { grab() }\n\nmove(\"right\")\n",
-      "hint": "Try a repeat loop: move right, then if gem_here() { grab() }.",
-      "tutorial": "# Conditionals: `if`\n\nWhat if you only want to do something *sometimes*? Use `if`!\n\n## The `if` statement\n\n`if` runs code only when a condition is true:\n\n```\nif gem_here() {\n    grab()\n}\n```\n\nThis grabs **only** if there's a gem on the current tile. Otherwise it does nothing.\n\n## The `gem_here()` sensor\n\n| Sensor | Returns `true` when... |\n|---|---|\n| `gem_here()` | There's a gem on your current tile |\n\n## Combining `if` with loops\n\nYou can put `if` inside a loop to check on every step:\n\n```\nrepeat 5 {\n    move(\"right\")\n    if gem_here() { grab() }\n}\n```\n\n## Your mission\n\nGems are scattered along the path — but not on every tile. Use `if gem_here()` to grab only where gems exist.\n"
-    },
-    {
-      "level_id": "puzzle-9",
-      "title": "Wall Hugger",
-      "description": "Navigate the zigzag path! Use wall_ahead() to know when to turn.",
-      "map": [
-        "S.*..",
-        "####.",
-        ".....",
-        ".####",
-        "....G"
-      ],
-      "completion": "reach_goal",
-      "stars": { "collect_all_gems": true, "max_instructions": 13, "max_steps": 20 },
-      "starter_code": "// Navigate the zigzag!\n// wall_ahead() — true if the next tile is a wall\n// path_ahead() — true if you can move forward\n// turn(\"left\") / turn(\"right\") — change direction\n\nmove(\"right\")\n",
-      "hint": "Move forward, and when you hit a wall, turn. The pattern is: right, down, left, down, right.",
-      "tutorial": "# Turning and Wall Detection\n\nYour bot has a **facing direction**. The `turn()` function changes which way the bot faces, and `wall_ahead()` checks what's in front of it.\n\n## Turning\n\n```\nturn(\"left\")    // rotate 90° left\nturn(\"right\")   // rotate 90° right\n```\n\nAfter turning, `move(\"right\")` still moves right on the grid — but `path_ahead()` and `wall_ahead()` now check the bot's new facing direction.\n\n## The `wall_ahead()` sensor\n\n| Sensor | Returns `true` when... |\n|---|---|\n| `wall_ahead()` | The tile ahead (in facing direction) is a wall |\n\n## Navigating zigzag paths\n\nWhen a path zigzags, you can break it into straight sections:\n\n```\nrepeat 4 { move(\"right\") }\nrepeat 2 { move(\"down\") }\nrepeat 4 { move(\"left\") }\n```\n\n## Your mission\n\nNavigate the S-shaped zigzag path to reach the goal. Collect the gem along the way!\n"
-    },
-    {
-      "level_id": "puzzle-10",
-      "title": "Gem Collector",
-      "description": "Combine while and if to collect gems automatically until you reach the goal!",
-      "map": ["S*.*.*G"],
-      "completion": "reach_goal",
-      "stars": { "collect_all_gems": true, "max_instructions": 5, "max_steps": 12 },
-      "starter_code": "// Use while and if together!\n// path_ahead() returns true if you can keep moving\n// gem_here() returns true when there's a gem\n\nmove(\"right\")\n",
-      "hint": "Try: while path_ahead() { move(\"right\") if gem_here() { grab() } }",
-      "tutorial": "# Combining `while` + `if`\n\nNow you know both `while` loops and `if` conditionals. Let's combine them!\n\n## Negation with `!`\n\nUse `!` to flip a condition:\n\n```\nwhile !wall_ahead() {\n    // keep going until we hit a wall\n}\n```\n\n`!wall_ahead()` means \"while there is NOT a wall ahead.\"\n\n## Nesting `if` inside `while`\n\n```\nwhile path_ahead() {\n    move(\"right\")\n    if gem_here() { grab() }\n}\n```\n\nEach iteration: move, then check for a gem. This repeats until the bot can't move further.\n\n## Your mission\n\nWalk to the goal and collect every gem along the way using `while` and `if` together.\n"
-    },
-    {
-      "level_id": "puzzle-11",
-      "title": "For the Win",
-      "description": "Descend the staircase! Each step goes right then down. Use a for loop to repeat the pattern.",
-      "map": [
-        "S*###",
-        "#.*##",
-        "##.*#",
-        "###.*",
-        "####G"
-      ],
-      "completion": "reach_goal",
-      "stars": { "collect_all_gems": true, "max_instructions": 6, "max_steps": 13 },
-      "starter_code": "// Use a for loop to descend the staircase!\n// for i in range(N) { ... } repeats N times\n// Each step: move right, grab, move down\n\nmove(\"right\")\n",
-      "hint": "Try: for i in range(4) { move(\"right\") grab() move(\"down\") }",
-      "tutorial": "# For Loops\n\nThe `for` loop gives you a **counter variable** that changes each iteration.\n\n## The `for` loop\n\n```\nfor i in range(4) {\n    say(i)\n}\n```\n\nThis runs 4 times, with `i` being 0, 1, 2, 3.\n\n## `for` vs `repeat`\n\n- `repeat 4 { ... }` — runs 4 times, no counter\n- `for i in range(4) { ... }` — runs 4 times, with `i` counting up\n\nUse `for` when you might need the counter, or when it reads more clearly.\n\n## Recognizing patterns\n\nLook at the staircase — each step is the same: move right, grab gem, move down. That's a perfect loop body!\n\n## Your mission\n\nDescend the staircase by repeating the step pattern with a `for` loop. Collect all the gems!\n"
-    },
-    {
-      "level_id": "puzzle-12",
-      "title": "Helper Bot",
-      "description": "Two clusters of gems! Define a function to collect a pair, then reuse it.",
-      "map": ["S**..**G"],
-      "completion": "reach_goal",
-      "stars": { "collect_all_gems": true, "max_instructions": 7, "max_steps": 16 },
-      "starter_code": "// Define a function to avoid repeating yourself!\n// fn my_function() { ... }\n// Then call it: my_function()\n\nmove(\"right\")\n",
-      "hint": "Define fn collect_pair() { move(\"right\") grab() move(\"right\") grab() } and call it twice with moves between.",
-      "tutorial": "# Functions\n\nWhen you have a sequence of steps you want to **reuse**, define a function.\n\n## Defining a function\n\n```\nfn collect_pair() {\n    move(\"right\")\n    grab()\n    move(\"right\")\n    grab()\n}\n```\n\nThis creates a new command called `collect_pair` but doesn't run it yet.\n\n## Calling a function\n\n```\ncollect_pair()\n```\n\nNow the code inside runs. You can call it as many times as you want!\n\n## Functions with parameters\n\nFunctions can also take inputs:\n\n```\nfn walk(n) {\n    repeat n { move(\"right\") }\n}\nwalk(3)   // moves right 3 times\nwalk(5)   // moves right 5 times\n```\n\n## Your mission\n\nThere are two clusters of gems with a gap between them. Define a function to collect a pair of gems, then reuse it!\n"
-    },
-    {
-      "level_id": "puzzle-13",
-      "title": "Maze Runner",
-      "description": "Navigate the maze and collect all gems! Use sensors to find your way.",
-      "map": [
-        "S....##",
-        "####.##",
-        "##*..##",
-        "##.####",
-        "##*...*",
-        "######.",
-        "######G"
-      ],
-      "completion": "reach_goal",
-      "stars": { "collect_all_gems": true, "max_instructions": 12, "max_steps": 30 },
-      "starter_code": "// Navigate the maze!\n// Use path_ahead(), wall_ahead(), gem_here()\n// Combine while loops with if statements\n\nmove(\"right\")\n",
-      "hint": "You can solve it step by step, or try a while loop with wall detection to navigate.",
-      "tutorial": "# Putting It All Together: Maze\n\nTime to combine everything you've learned!\n\n## Your toolbox\n\n| Tool | What it does |\n|---|---|\n| `move(dir)` | Move one tile in a direction |\n| `turn(dir)` | Turn left or right |\n| `grab()` | Pick up a gem |\n| `repeat N { }` | Run code N times |\n| `while cond { }` | Loop while condition is true |\n| `if cond { }` | Run code only if condition is true |\n| `for i in range(N) { }` | Loop with counter |\n| `fn name() { }` | Define a reusable function |\n\n## Sensors\n\n| Sensor | Returns `true` when... |\n|---|---|\n| `path_ahead()` | Tile ahead is walkable |\n| `wall_ahead()` | Tile ahead is a wall |\n| `gem_here()` | Gem on current tile |\n| `facing()` | Returns current direction |\n\n## Strategy\n\nBreak the maze into sections. Navigate each section, checking for gems along the way.\n\n## Your mission\n\nNavigate the maze, collect all gems, and reach the goal!\n"
-    },
-    {
-      "level_id": "puzzle-14",
-      "title": "The Grand Tour",
-      "description": "The ultimate challenge! Navigate a winding path, collect all gems, and reach the goal. Use everything you've learned!",
-      "map": [
-        "S..*...#",
-        "######.#",
-        "######*#",
-        "######.#",
-        "##..*..#",
-        "##.#####",
-        "##...*..","#######G"
-      ],
-      "completion": "reach_goal",
-      "stars": { "collect_all_gems": true, "max_instructions": 15, "max_steps": 40 },
-      "starter_code": "// The Grand Tour — combine everything!\n// move(), turn(), grab(), repeat, while, if, for, fn\n// Use sensors: path_ahead(), wall_ahead(), gem_here(), facing()\n\nmove(\"right\")\n",
-      "hint": "Break it into sections: top corridor, down the right side, left along the middle, and so on.",
-      "tutorial": "# The Grand Tour\n\nThis is the final challenge — a winding path with gems scattered throughout.\n\n## Strategy tips\n\n1. **Break it into sections** — look at the path and identify straight segments\n2. **Use functions** — if you repeat a pattern (like \"walk and grab\"), make it a function\n3. **Use loops** — `repeat` for known distances, `while` for sensor-based movement\n4. **Check for gems** — use `if gem_here() { grab() }` in your loops\n\n## Example approach\n\n```\nfn walk(n) {\n    repeat n {\n        move(facing())\n        if gem_here() { grab() }\n    }\n}\n\nwalk(6)\nturn(\"right\")\nwalk(4)\n// ... continue for each section\n```\n\nThe `facing()` sensor returns your current direction, so `move(facing())` always moves forward.\n\n## Your mission\n\nNavigate the entire winding path, collect all gems, and reach the goal. Use everything you've learned!\n"
-    }
-  ]
+    "levels": [
+        {
+            "level_id": "puzzle-1",
+            "title": "Walk to the Goal",
+            "description": "Help the bot reach the glowing goal tile! Use the move() function with a direction.",
+            "map": [
+                "S......G"
+            ],
+            "completion": "reach_goal",
+            "stars": {
+                "max_instructions": 7,
+                "max_steps": 7
+            },
+            "starter_code": "// Move the bot to the goal!\n// Use: move(\"right\") to move right\n\nmove(\"right\")\n",
+            "hint": "You need to move right 7 times to reach the goal.",
+            "tutorial": "# Welcome to First Steps!\n\nYou control a **bot** on a grid by writing code. Your goal is to guide the bot to the **green goal tile**.\n\n## Your first command: `move()`\n\nThe `move()` function moves the bot one tile in a direction:\n\n```\nmove(\"right\")\nmove(\"left\")\nmove(\"up\")\nmove(\"down\")\n```\n\nEach `move()` call moves the bot **one step**. To move multiple tiles, call `move()` multiple times.\n\n## Your mission\n\nThe goal tile is 7 steps to the right. Write enough `move(\"right\")` calls to get there!\n"
+        },
+        {
+            "level_id": "puzzle-2",
+            "title": "Collect the Gem",
+            "description": "Grab the gem and then reach the goal! Use grab() when standing on a gem.",
+            "map": [
+                "S...*..G"
+            ],
+            "completion": "reach_goal",
+            "stars": {
+                "collect_all_gems": true,
+                "max_instructions": 10,
+                "max_steps": 10
+            },
+            "starter_code": "// Collect the gem and reach the goal!\n// Use: grab() to pick up a gem when standing on it\n\nmove(\"right\")\n",
+            "hint": "Move to the gem first, grab() it, then continue to the goal.",
+            "tutorial": "# Collecting Gems\n\nSome tiles have **gems** on them. You can pick them up with the `grab()` function.\n\n## How `grab()` works\n\nWhen your bot is standing on a tile with a gem, call:\n\n```\ngrab()\n```\n\nThis picks up the gem. If there's no gem on the tile, `grab()` will cause an error — so only use it when you're on a gem!\n\n## Sequencing instructions\n\nYour code runs **top to bottom**, one instruction at a time:\n\n```\nmove(\"right\")   // step 1\nmove(\"right\")   // step 2\ngrab()           // step 3\nmove(\"right\")   // step 4\n```\n\n## Your mission\n\nMove to the gem, grab it, then continue to the goal.\n"
+        },
+        {
+            "level_id": "puzzle-3",
+            "title": "Around the Wall",
+            "description": "There's a wall in the way! Navigate around it to collect the gem and reach the goal.",
+            "map": [
+                "........",
+                "........",
+                "....#...",
+                "....#...",
+                "S...#.*G",
+                "....#...",
+                "....#...",
+                "........"
+            ],
+            "completion": "reach_goal",
+            "stars": {
+                "collect_all_gems": true,
+                "max_instructions": 14,
+                "max_steps": 16
+            },
+            "starter_code": "// Navigate around the wall!\n// Use: move(\"up\"), move(\"down\"), move(\"left\"), move(\"right\")\n\nmove(\"right\")\n",
+            "hint": "Move up to get around the wall, then right, then down to the gem.",
+            "tutorial": "# Navigating in All Directions\n\nSo far you've moved right. But the grid is 2D — you can move in **all four directions**:\n\n```\nmove(\"up\")\nmove(\"down\")\nmove(\"left\")\nmove(\"right\")\n```\n\n## Walls\n\nGrey tiles are **walls** — you can't walk through them. If you try, you'll get an error. You need to find a path *around* walls.\n\n## Planning a path\n\nLook at the grid and plan your route:\n1. Which direction gets you closer to the goal?\n2. If there's a wall, how can you go around it?\n\n## Your mission\n\nThere's a wall blocking your path. Navigate around it, collect the gem, and reach the goal.\n"
+        },
+        {
+            "level_id": "puzzle-4",
+            "title": "Repeat After Me",
+            "description": "That's a long corridor! Instead of writing move() seven times, use repeat to do it in one line.",
+            "map": [
+                "S...*..G"
+            ],
+            "completion": "reach_goal",
+            "stars": {
+                "collect_all_gems": true,
+                "max_instructions": 5,
+                "max_steps": 9
+            },
+            "starter_code": "// Use repeat to move efficiently!\n// repeat N { ... } runs the code N times\n// Example: repeat 3 { say(\"hi\") }\n\nmove(\"right\")\n",
+            "hint": "Try: repeat 7 { move(\"right\") }",
+            "tutorial": "# Loops: `repeat`\n\nWriting `move(\"right\")` seven times works, but there's a better way!\n\n## The `repeat` block\n\n`repeat` runs the same code multiple times:\n\n```\nrepeat 3 {\n    move(\"right\")\n}\n```\n\nThis is the same as writing `move(\"right\")` three times — but much shorter!\n\n## How it works\n\n- `repeat N { ... }` runs the code inside the braces **N times**\n- N can be any whole number\n- The code inside the `{ }` can be any instructions\n\n## Your mission\n\nUse `repeat` to reach the goal without writing `move()` seven separate times. Don't forget the gem!\n"
+        },
+        {
+            "level_id": "puzzle-5",
+            "title": "Gem Trail",
+            "description": "A trail of gems leads to the goal. Collect them all using a loop!",
+            "map": [
+                "S******G"
+            ],
+            "completion": "reach_goal",
+            "stars": {
+                "collect_all_gems": true,
+                "max_instructions": 4,
+                "max_steps": 14
+            },
+            "starter_code": "// Collect all gems on the way to the goal!\n// Put multiple actions inside a repeat block\n\nmove(\"right\")\n",
+            "hint": "Try: repeat 6 { move(\"right\") grab() } then one more move.",
+            "tutorial": "# Multiple Actions in Loops\n\nA `repeat` block can contain **more than one instruction**:\n\n```\nrepeat 3 {\n    move(\"right\")\n    grab()\n}\n```\n\nThis moves right **and** grabs, three times in a row. The bot does both actions in order, then repeats.\n\n## Think in patterns\n\nLook at the grid — is there a repeating pattern? If the bot needs to \"move then grab\" over and over, that's a perfect loop body.\n\n## Your mission\n\nThere's a trail of gems leading to the goal. Use a loop with multiple actions to collect them all efficiently.\n"
+        },
+        {
+            "level_id": "puzzle-6",
+            "title": "The L-Shape",
+            "description": "Follow the L-shaped corridor to the goal. You'll need two repeat blocks!",
+            "map": [
+                "S....*",
+                "#####.",
+                "#####.",
+                "#####.",
+                "#####.",
+                "#####G"
+            ],
+            "completion": "reach_goal",
+            "stars": {
+                "collect_all_gems": true,
+                "max_instructions": 5,
+                "max_steps": 11
+            },
+            "starter_code": "// Navigate the L-shaped path!\n// Use two repeat blocks — one for each direction\n\nmove(\"right\")\n",
+            "hint": "Move right 5 times, then down 5 times.",
+            "tutorial": "# Multiple Repeat Blocks\n\nYou're not limited to a single loop! You can use **multiple repeat blocks** in sequence:\n\n```\nrepeat 5 { move(\"right\") }\nrepeat 3 { move(\"down\") }\n```\n\nThe first loop runs to completion, then the second loop starts.\n\n## Sequencing loops\n\nThink of each loop as one \"section\" of your path. When the path changes direction, start a new loop.\n\n## Your mission\n\nThe corridor turns from horizontal to vertical. Use two repeat blocks — one for each direction — and don't forget the gem at the corner!\n"
+        },
+        {
+            "level_id": "puzzle-7",
+            "title": "While You Can",
+            "description": "Walk forward until you hit a wall! Use while and path_ahead() to stop automatically.",
+            "map": [
+                "######",
+                "S...G#",
+                "######"
+            ],
+            "completion": "reach_goal",
+            "stars": {
+                "max_instructions": 4,
+                "max_steps": 6
+            },
+            "starter_code": "// Use while to keep moving until blocked!\n// path_ahead() returns true if you can move forward\n// wall_ahead() returns true if there's a wall ahead\n\nmove(\"right\")\n",
+            "hint": "Try: while path_ahead() { move(\"right\") }",
+            "tutorial": "# While Loops and Sensors\n\nSometimes you don't know *exactly* how many steps to take. That's where `while` loops come in!\n\n## The `while` loop\n\nA `while` loop keeps running as long as its condition is **true**:\n\n```\nwhile path_ahead() {\n    move(\"right\")\n}\n```\n\nThis moves right until there's no more path ahead.\n\n## Sensors\n\nYour bot has built-in sensors that return `true` or `false`:\n\n| Sensor | Returns `true` when... |\n|---|---|\n| `path_ahead()` | The tile ahead is walkable |\n| `wall_ahead()` | The tile ahead is a wall |\n\n## `while` vs `repeat`\n\n- Use `repeat N` when you know the exact count\n- Use `while condition` when you want to keep going until something changes\n\n## Your mission\n\nWalk forward until you hit a wall. Use `while` and a sensor to stop automatically!\n"
+        },
+        {
+            "level_id": "puzzle-8",
+            "title": "Check Before You Grab",
+            "description": "Some tiles have gems, some don't. Use if and gem_here() to grab only when there's a gem!",
+            "map": [
+                "S*.*.*.G"
+            ],
+            "completion": "reach_goal",
+            "stars": {
+                "collect_all_gems": true,
+                "max_instructions": 5,
+                "max_steps": 11
+            },
+            "starter_code": "// Grab gems only where they exist!\n// gem_here() returns true if there's a gem on your tile\n// if gem_here() { grab() }\n\nmove(\"right\")\n",
+            "hint": "Try a repeat loop: move right, then if gem_here() { grab() }.",
+            "tutorial": "# Conditionals: `if`\n\nWhat if you only want to do something *sometimes*? Use `if`!\n\n## The `if` statement\n\n`if` runs code only when a condition is true:\n\n```\nif gem_here() {\n    grab()\n}\n```\n\nThis grabs **only** if there's a gem on the current tile. Otherwise it does nothing.\n\n## The `gem_here()` sensor\n\n| Sensor | Returns `true` when... |\n|---|---|\n| `gem_here()` | There's a gem on your current tile |\n\n## Combining `if` with loops\n\nYou can put `if` inside a loop to check on every step:\n\n```\nrepeat 5 {\n    move(\"right\")\n    if gem_here() { grab() }\n}\n```\n\n## Your mission\n\nGems are scattered along the path — but not on every tile. Use `if gem_here()` to grab only where gems exist.\n"
+        },
+        {
+            "level_id": "puzzle-9",
+            "title": "Wall Hugger",
+            "description": "Navigate the zigzag path! Use wall_ahead() to know when to turn.",
+            "map": [
+                "S.*..",
+                "####.",
+                ".....",
+                ".####",
+                "....G"
+            ],
+            "completion": "reach_goal",
+            "stars": {
+                "collect_all_gems": true,
+                "max_instructions": 13,
+                "max_steps": 20
+            },
+            "starter_code": "// Navigate the zigzag!\n// wall_ahead() — true if the next tile is a wall\n// path_ahead() — true if you can move forward\n// turn(\"left\") / turn(\"right\") — change direction\n\nmove(\"right\")\n",
+            "hint": "Move forward, and when you hit a wall, turn. The pattern is: right, down, left, down, right.",
+            "tutorial": "# Turning and Wall Detection\n\nYour bot has a **facing direction**. The `turn()` function changes which way the bot faces, and `wall_ahead()` checks what's in front of it.\n\n## Turning\n\n```\nturn(\"left\")    // rotate 90° left\nturn(\"right\")   // rotate 90° right\n```\n\nAfter turning, `move(\"right\")` still moves right on the grid — but `path_ahead()` and `wall_ahead()` now check the bot's new facing direction.\n\n## The `wall_ahead()` sensor\n\n| Sensor | Returns `true` when... |\n|---|---|\n| `wall_ahead()` | The tile ahead (in facing direction) is a wall |\n\n## Navigating zigzag paths\n\nWhen a path zigzags, you can break it into straight sections:\n\n```\nrepeat 4 { move(\"right\") }\nrepeat 2 { move(\"down\") }\nrepeat 4 { move(\"left\") }\n```\n\n## Your mission\n\nNavigate the S-shaped zigzag path to reach the goal. Collect the gem along the way!\n"
+        },
+        {
+            "level_id": "puzzle-10",
+            "title": "Gem Collector",
+            "description": "Combine while and if to collect gems automatically until you reach the goal!",
+            "map": [
+                "S*.*.*G"
+            ],
+            "completion": "reach_goal",
+            "stars": {
+                "collect_all_gems": true,
+                "max_instructions": 5,
+                "max_steps": 12
+            },
+            "starter_code": "// Use while and if together!\n// path_ahead() returns true if you can keep moving\n// gem_here() returns true when there's a gem\n\nmove(\"right\")\n",
+            "hint": "Try: while path_ahead() { move(\"right\") if gem_here() { grab() } }",
+            "tutorial": "# Combining `while` + `if`\n\nNow you know both `while` loops and `if` conditionals. Let's combine them!\n\n## Negation with `!`\n\nUse `!` to flip a condition:\n\n```\nwhile !wall_ahead() {\n    // keep going until we hit a wall\n}\n```\n\n`!wall_ahead()` means \"while there is NOT a wall ahead.\"\n\n## Nesting `if` inside `while`\n\n```\nwhile path_ahead() {\n    move(\"right\")\n    if gem_here() { grab() }\n}\n```\n\nEach iteration: move, then check for a gem. This repeats until the bot can't move further.\n\n## Your mission\n\nWalk to the goal and collect every gem along the way using `while` and `if` together.\n"
+        },
+        {
+            "level_id": "puzzle-11",
+            "title": "For the Win",
+            "description": "Descend the staircase! Each step goes right then down. Use a for loop to repeat the pattern.",
+            "map": [
+                "S*###",
+                "#.*##",
+                "##.*#",
+                "###.*",
+                "####G"
+            ],
+            "completion": "reach_goal",
+            "stars": {
+                "collect_all_gems": true,
+                "max_instructions": 4,
+                "max_steps": 13
+            },
+            "starter_code": "// Use a for loop to descend the staircase!\n// for i in range(N) { ... } repeats N times\n// Each step: move right, grab, move down\n\nmove(\"right\")\n",
+            "hint": "Try: for i in range(4) { move(\"right\") grab() move(\"down\") }",
+            "tutorial": "# For Loops\n\nThe `for` loop gives you a **counter variable** that changes each iteration.\n\n## The `for` loop\n\n```\nfor i in range(4) {\n    say(i)\n}\n```\n\nThis runs 4 times, with `i` being 0, 1, 2, 3.\n\n## `for` vs `repeat`\n\n- `repeat 4 { ... }` — runs 4 times, no counter\n- `for i in range(4) { ... }` — runs 4 times, with `i` counting up\n\nUse `for` when you might need the counter, or when it reads more clearly.\n\n## Recognizing patterns\n\nLook at the staircase — each step is the same: move right, grab gem, move down. That's a perfect loop body!\n\n## Your mission\n\nDescend the staircase by repeating the step pattern with a `for` loop. Collect all the gems!\n"
+        },
+        {
+            "level_id": "puzzle-12",
+            "title": "Helper Bot",
+            "description": "Two clusters of gems! Define a function to collect a pair, then reuse it.",
+            "map": [
+                "S**..**G"
+            ],
+            "completion": "reach_goal",
+            "stars": {
+                "collect_all_gems": true,
+                "max_instructions": 7,
+                "max_steps": 16
+            },
+            "starter_code": "// Define a function to avoid repeating yourself!\n// fn my_function() { ... }\n// Then call it: my_function()\n\nmove(\"right\")\n",
+            "hint": "Define fn collect_pair() { move(\"right\") grab() move(\"right\") grab() } and call it twice with moves between.",
+            "tutorial": "# Functions\n\nWhen you have a sequence of steps you want to **reuse**, define a function.\n\n## Defining a function\n\n```\nfn collect_pair() {\n    move(\"right\")\n    grab()\n    move(\"right\")\n    grab()\n}\n```\n\nThis creates a new command called `collect_pair` but doesn't run it yet.\n\n## Calling a function\n\n```\ncollect_pair()\n```\n\nNow the code inside runs. You can call it as many times as you want!\n\n## Functions with parameters\n\nFunctions can also take inputs:\n\n```\nfn walk(n) {\n    repeat n { move(\"right\") }\n}\nwalk(3)   // moves right 3 times\nwalk(5)   // moves right 5 times\n```\n\n## Your mission\n\nThere are two clusters of gems with a gap between them. Define a function to collect a pair of gems, then reuse it!\n"
+        },
+        {
+            "level_id": "puzzle-13",
+            "title": "Maze Runner",
+            "description": "Navigate the maze and collect all gems! Use sensors to find your way.",
+            "map": [
+                "S....##",
+                "####.##",
+                "##*..##",
+                "##.####",
+                "##*...*",
+                "######.",
+                "######G"
+            ],
+            "completion": "reach_goal",
+            "stars": {
+                "collect_all_gems": true,
+                "max_instructions": 12,
+                "max_steps": 30
+            },
+            "starter_code": "// Navigate the maze!\n// Use path_ahead(), wall_ahead(), gem_here()\n// Combine while loops with if statements\n\nmove(\"right\")\n",
+            "hint": "You can solve it step by step, or try a while loop with wall detection to navigate.",
+            "tutorial": "# Putting It All Together: Maze\n\nTime to combine everything you've learned!\n\n## Your toolbox\n\n| Tool | What it does |\n|---|---|\n| `move(dir)` | Move one tile in a direction |\n| `turn(dir)` | Turn left or right |\n| `grab()` | Pick up a gem |\n| `repeat N { }` | Run code N times |\n| `while cond { }` | Loop while condition is true |\n| `if cond { }` | Run code only if condition is true |\n| `for i in range(N) { }` | Loop with counter |\n| `fn name() { }` | Define a reusable function |\n\n## Sensors\n\n| Sensor | Returns `true` when... |\n|---|---|\n| `path_ahead()` | Tile ahead is walkable |\n| `wall_ahead()` | Tile ahead is a wall |\n| `gem_here()` | Gem on current tile |\n| `facing()` | Returns current direction |\n\n## Strategy\n\nBreak the maze into sections. Navigate each section, checking for gems along the way.\n\n## Your mission\n\nNavigate the maze, collect all gems, and reach the goal!\n"
+        },
+        {
+            "level_id": "puzzle-14",
+            "title": "The Grand Tour",
+            "description": "The ultimate challenge! Navigate a winding path, collect all gems, and reach the goal. Use everything you've learned!",
+            "map": [
+                "S..*...#",
+                "######.#",
+                "######*#",
+                "######.#",
+                "##..*..#",
+                "##.#####",
+                "##...*..",
+                "#######G"
+            ],
+            "completion": "reach_goal",
+            "stars": {
+                "collect_all_gems": true,
+                "max_instructions": 15,
+                "max_steps": 40
+            },
+            "starter_code": "// The Grand Tour — combine everything!\n// move(), turn(), grab(), repeat, while, if, for, fn\n// Use sensors: path_ahead(), wall_ahead(), gem_here(), facing()\n\nmove(\"right\")\n",
+            "hint": "Break it into sections: top corridor, down the right side, left along the middle, and so on.",
+            "tutorial": "# The Grand Tour\n\nThis is the final challenge — a winding path with gems scattered throughout.\n\n## Strategy tips\n\n1. **Break it into sections** — look at the path and identify straight segments\n2. **Use functions** — if you repeat a pattern (like \"walk and grab\"), make it a function\n3. **Use loops** — `repeat` for known distances, `while` for sensor-based movement\n4. **Check for gems** — use `if gem_here() { grab() }` in your loops\n\n## Example approach\n\n```\nfn walk(n) {\n    repeat n {\n        move(facing())\n        if gem_here() { grab() }\n    }\n}\n\nwalk(6)\nturn(\"right\")\nwalk(4)\n// ... continue for each section\n```\n\nThe `facing()` sensor returns your current direction, so `move(facing())` always moves forward.\n\n## Your mission\n\nNavigate the entire winding path, collect all gems, and reach the goal. Use everything you've learned!\n"
+        }
+    ]
 }

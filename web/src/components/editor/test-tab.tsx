@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef, useLayoutEffect, useMemo } from "react";
-import Editor from "@monaco-editor/react";
+import Editor, { type OnMount } from "@monaco-editor/react";
 import { Button } from "@/components/ui/button";
 import { GameGrid } from "@/components/game/game-grid";
 import { PlaybackControls } from "@/components/game/playback-controls";
@@ -13,6 +13,7 @@ import type {
   BotState,
   Grid,
   GameAction,
+  GameActionKind,
   SimulationError,
   PlaybackSpeed,
 } from "@/types/game";
@@ -25,7 +26,7 @@ interface TestTabProps {
   onCodeChange: (code: string) => void;
 }
 
-function applyAction(action: GameAction, bot: BotState, grid: Grid) {
+function applyAction(action: GameActionKind, bot: BotState, grid: Grid) {
   switch (action.type) {
     case "move":
       bot.position = action.to;
@@ -41,7 +42,7 @@ function applyAction(action: GameAction, bot: BotState, grid: Grid) {
         if (grabTile) {
           if (grabTile.item === "key") bot.keys += 1;
           else if (grabTile.item === "diamond") bot.diamonds += 1;
-          else { bot.gems += 1; bot.gems_collected += 1; }
+          else bot.gems += 1;
           grabTile.item = undefined;
         }
       }
@@ -96,11 +97,11 @@ export function TestTab({ config, onConfigChange, code, onCodeChange }: TestTabP
   const colorMode = useColorMode();
   const [actions, setActions] = useState<GameAction[]>([]);
   const outputs = useMemo(
-    () => actions.filter((a) => a.type === "say").map((a) => a.type === "say" ? a.message : ""),
+    () => actions.filter((a) => a.action.type === "say").map((a) => a.action.type === "say" ? a.action.message : ""),
     [actions],
   );
   const warnings = useMemo(
-    () => actions.filter((a) => a.type === "bump").map((a) => a.type === "bump" ? a.message : ""),
+    () => actions.filter((a) => a.action.type === "bump").map((a) => a.action.type === "bump" ? a.action.message : ""),
     [actions],
   );
   const [currentActionIndex, setCurrentActionIndex] = useState(0);
@@ -124,6 +125,11 @@ export function TestTab({ config, onConfigChange, code, onCodeChange }: TestTabP
   const playbackIntervalRef = useRef<number | null>(null);
   const simulationErrorRef = useRef<SimulationError | null>(null);
   const celebrationShownRef = useRef(false);
+
+  // Monaco editor ref for line highlighting
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const editorRef = useRef<any>(null);
+  const decorationsRef = useRef<string[]>([]);
 
   // Grid auto-sizing
   const MIN_TILE = 32;
@@ -202,20 +208,20 @@ export function TestTab({ config, onConfigChange, code, onCodeChange }: TestTabP
     for (let i = 0; i < currentActionIndex; i++) {
       const action = actions[i];
       if (action) {
-        if (action.type === "error") {
+        if (action.action.type === "error") {
           setIsPlaying(false);
           setError(
             simulationErrorRef.current ?? {
               line: null,
               column: null,
-              message: action.message,
+              message: action.action.message,
               friendly_hint: null,
             },
           );
           break;
         }
         newBotState.message = null;
-        applyAction(action, newBotState, newGrid);
+        applyAction(action.action, newBotState, newGrid);
       }
     }
 
@@ -278,6 +284,35 @@ export function TestTab({ config, onConfigChange, code, onCodeChange }: TestTabP
     onConfigChange({ ...config, starter_code: code });
   };
 
+  const handleEditorMount: OnMount = (editor) => {
+    editorRef.current = editor;
+  };
+
+  // Highlight the current line in the editor during playback
+  useEffect(() => {
+    const editor = editorRef.current;
+    if (!editor) return;
+
+    const actionIndex = currentActionIndex - 1;
+    const action = actionIndex >= 0 ? actions[actionIndex] : undefined;
+    const line = action?.line;
+
+    if (line && line > 0) {
+      decorationsRef.current = editor.deltaDecorations(decorationsRef.current, [
+        {
+          range: { startLineNumber: line, startColumn: 1, endLineNumber: line, endColumn: 1 },
+          options: {
+            isWholeLine: true,
+            className: "highlighted-line",
+          },
+        },
+      ]);
+      editor.revealLineInCenterIfOutsideViewport(line);
+    } else {
+      decorationsRef.current = editor.deltaDecorations(decorationsRef.current, []);
+    }
+  }, [currentActionIndex, actions]);
+
   return (
     <div className="relative flex flex-col lg:flex-row gap-4 h-full min-h-0">
       {/* Left Panel: Objectives + Grid + Controls */}
@@ -325,6 +360,7 @@ export function TestTab({ config, onConfigChange, code, onCodeChange }: TestTabP
             currentAction={currentActionIndex}
             totalActions={actions.length}
             disabled={isRunning}
+            inventory={{ gems: botState.gems, diamonds: botState.diamonds, keys: botState.keys }}
             outputs={outputs}
             warnings={warnings}
           />
@@ -341,6 +377,7 @@ export function TestTab({ config, onConfigChange, code, onCodeChange }: TestTabP
             value={code}
             onChange={(val) => onCodeChange(val ?? "")}
             beforeMount={registerBopLanguage}
+            onMount={handleEditorMount}
             options={{
               minimap: { enabled: false },
               lineNumbers: "on",

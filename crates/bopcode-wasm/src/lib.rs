@@ -121,8 +121,8 @@ mod tests {
         result
             .actions
             .iter()
-            .filter_map(|a| match a {
-                GameAction::Say { message } => Some(message.clone()),
+            .filter_map(|a| match &a.action {
+                GameActionKind::Say { message } => Some(message.clone()),
                 _ => None,
             })
             .collect()
@@ -231,11 +231,11 @@ mod tests {
         // Bot stays at (0,1) after the bump
         assert_eq!(result.final_state.position, Position::new(0, 1));
         // The say() after the bump should still execute
-        assert!(result.actions.iter().any(|a| matches!(a, GameAction::Bump { .. })));
+        assert!(result.actions.iter().any(|a| matches!(a.action, GameActionKind::Bump { .. })));
         assert!(result
             .actions
             .iter()
-            .any(|a| matches!(a, GameAction::Say { message } if message == "still running")));
+            .any(|a| matches!(&a.action, GameActionKind::Say { message } if message == "still running")));
     }
 
     #[test]

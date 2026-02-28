@@ -131,7 +131,7 @@ function HomePage() {
                       params: { worldId: world.world_id },
                     })
                   }
-                  className={`${themeClass} group relative overflow-hidden rounded-xl bg-gradient-to-br ${color} p-6 text-left transition-all hover:scale-[1.02] hover:shadow-lg cursor-pointer`}
+                  className={`${themeClass} group relative overflow-hidden rounded-xl bg-gradient-to-br ${color} p-6 text-left transition-all hover:scale-[1.02] hover:shadow-lg cursor-pointer flex flex-col`}
                 >
                   <h4 className="text-lg font-bold text-[var(--theme-contrast)] mb-1">
                     {world.title}
@@ -141,7 +141,7 @@ function HomePage() {
                   </p>
 
                   {wp.total > 0 && (
-                    <div className="mt-4 space-y-1.5">
+                    <div className="mt-auto pt-4 space-y-1.5">
                       <div className="flex items-center gap-2">
                         <div className="flex-1 h-1.5 bg-black/20 rounded-full overflow-hidden">
                           <div
@@ -155,14 +155,12 @@ function HomePage() {
                           {wp.completed}/{wp.total}
                         </span>
                       </div>
-                      {wp.stars > 0 && (
-                        <div className="flex items-center gap-1">
-                          <Star className="h-3 w-3 text-yellow-300 fill-yellow-300" />
-                          <span className="text-xs text-[var(--theme-contrast)]/60 font-medium">
-                            {wp.stars}/{wp.maxStars}
-                          </span>
-                        </div>
-                      )}
+                      <div className="flex items-center gap-1">
+                        <Star className={`h-3 w-3 ${wp.stars > 0 ? "text-yellow-300 fill-yellow-300" : "text-[var(--theme-contrast)]/30"}`} />
+                        <span className="text-xs text-[var(--theme-contrast)]/60 font-medium">
+                          {wp.stars}/{wp.maxStars}
+                        </span>
+                      </div>
                     </div>
                   )}
                 </button>

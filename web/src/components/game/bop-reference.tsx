@@ -53,7 +53,8 @@ export function BopReference() {
               <Fn name="has_gem()" desc="True if holding a gem" />
               <Fn name="has_key()" desc="True if holding a key" />
               <Fn name="has_diamond()" desc="True if holding a diamond" />
-              <Fn name="inventory()" desc="Number of gems collected" />
+              <Fn name="inventory()" desc='Dict: {"gems", "diamonds", "keys"}' />
+              <Fn name='inventory_count("type")' desc="Count of held items by type" />
             </dl>
           </div>
 
