@@ -1,5 +1,6 @@
 import { useRef, useCallback, useLayoutEffect, useState } from "react";
 import { GameGrid } from "@/components/game/game-grid";
+import { Tooltip } from "@/components/ui/tooltip";
 import type { PuzzleConfig, TileType, TileItem, Direction } from "@/types/game";
 import { resizeGrid } from "@/lib/editor-store";
 
@@ -9,19 +10,19 @@ export type EditorTool =
   | { kind: "bot" }
   | { kind: "eraser" };
 
-const TOOL_PALETTE: { tool: EditorTool; label: string; color: string }[] = [
-  { tool: { kind: "tile", tileType: "floor" }, label: "Floor", color: "#0f0f14" },
-  { tool: { kind: "tile", tileType: "wall" }, label: "Wall", color: "#4a4a55" },
-  { tool: { kind: "tile", tileType: "goal" }, label: "Goal", color: "#86efac" },
-  { tool: { kind: "tile", tileType: "pit" }, label: "Pit", color: "#1a1a22" },
-  { tool: { kind: "tile", tileType: "locked_door" }, label: "Door", color: "#c4b5fd" },
-  { tool: { kind: "tile", tileType: "gem_vault" }, label: "Gem Vault", color: "#f9a8d4" },
-  { tool: { kind: "tile", tileType: "diamond_vault" }, label: "Dia Vault", color: "#7dd3fc" },
-  { tool: { kind: "item", item: "gem" }, label: "Gem", color: "#d8b4fe" },
-  { tool: { kind: "item", item: "key" }, label: "Key", color: "#fde68a" },
-  { tool: { kind: "item", item: "diamond" }, label: "Diamond", color: "#7dd3fc" },
-  { tool: { kind: "bot" }, label: "Bot", color: "#a5b4fc" },
-  { tool: { kind: "eraser" }, label: "Eraser", color: "#71717a" },
+const TOOL_PALETTE: { tool: EditorTool; label: string; color: string; description: string }[] = [
+  { tool: { kind: "tile", tileType: "floor" }, label: "Floor", color: "#0f0f14", description: "Empty walkable tile" },
+  { tool: { kind: "tile", tileType: "wall" }, label: "Wall", color: "#4a4a55", description: "Blocks bot movement" },
+  { tool: { kind: "tile", tileType: "goal" }, label: "Goal", color: "#86efac", description: "The bot must reach this tile to win" },
+  { tool: { kind: "tile", tileType: "pit" }, label: "Pit", color: "#1a1a22", description: "Bot falls in and fails the level" },
+  { tool: { kind: "tile", tileType: "locked_door" }, label: "Door", color: "#c4b5fd", description: "Requires a key to open" },
+  { tool: { kind: "tile", tileType: "gem_vault" }, label: "Gem Vault", color: "#f9a8d4", description: "Deposit gems here" },
+  { tool: { kind: "tile", tileType: "diamond_vault" }, label: "Dia Vault", color: "#7dd3fc", description: "Deposit diamonds here" },
+  { tool: { kind: "item", item: "gem" }, label: "Gem", color: "#d8b4fe", description: "Collectible item placed on a tile" },
+  { tool: { kind: "item", item: "key" }, label: "Key", color: "#fde68a", description: "Unlocks locked doors" },
+  { tool: { kind: "item", item: "diamond" }, label: "Diamond", color: "#7dd3fc", description: "Rare collectible placed on a tile" },
+  { tool: { kind: "bot" }, label: "Bot", color: "#a5b4fc", description: "Set bot start position. Click again to rotate." },
+  { tool: { kind: "eraser" }, label: "Eraser", color: "#71717a", description: "Reset tile to empty floor" },
 ];
 
 function toolKey(tool: EditorTool): string {
@@ -164,26 +165,26 @@ export function DesignTab({ config, onConfigChange, selectedTool, onToolChange }
       <div className="shrink-0 flex flex-wrap items-center gap-2">
         {/* Tool palette */}
         <div className="flex flex-wrap gap-1">
-          {TOOL_PALETTE.map(({ tool, label, color }) => {
+          {TOOL_PALETTE.map(({ tool, label, color, description }) => {
             const key = toolKey(tool);
             const isSelected = toolKey(selectedTool) === key;
             return (
-              <button
-                key={key}
-                onClick={() => onToolChange(tool)}
-                className={`flex items-center gap-1.5 px-2 py-1 text-xs font-medium rounded-md border transition-colors cursor-pointer ${
-                  isSelected
-                    ? "border-[var(--theme-400)]/70 bg-[var(--theme-500)]/20 text-zinc-900 dark:text-white"
-                    : "border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:border-zinc-400 dark:hover:border-zinc-600"
-                }`}
-                title={label}
-              >
-                <span
-                  className="w-3 h-3 rounded-sm border border-zinc-600 shrink-0"
-                  style={{ backgroundColor: color }}
-                />
-                {label}
-              </button>
+              <Tooltip key={key} content={description}>
+                <button
+                  onClick={() => onToolChange(tool)}
+                  className={`flex items-center gap-1.5 px-2 py-1 text-xs font-medium rounded-md border transition-colors cursor-pointer ${
+                    isSelected
+                      ? "border-[var(--theme-400)]/70 bg-[var(--theme-500)]/20 text-zinc-900 dark:text-white"
+                      : "border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:border-zinc-400 dark:hover:border-zinc-600"
+                  }`}
+                >
+                  <span
+                    className="w-3 h-3 rounded-sm border border-zinc-600 shrink-0"
+                    style={{ backgroundColor: color }}
+                  />
+                  {label}
+                </button>
+              </Tooltip>
             );
           })}
         </div>

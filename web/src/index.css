@@ -144,6 +144,11 @@
   100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
 }
 
+@keyframes tooltip-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 /* iOS viewport fix */
 @supports (-webkit-touch-callout: none) {
   .h-screen {

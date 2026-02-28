@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { ArrowLeft, Download, Upload, Check } from "lucide-react";
+import { ArrowLeft, Download, Upload, Check, X } from "lucide-react";
 import type { PuzzleConfig } from "@/types/game";
 import {
   createDefaultConfig,
@@ -29,6 +29,8 @@ export function LevelEditor() {
   const saveTimerRef = useRef<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [pendingAction, setPendingAction] = useState<PendingAction>(null);
+  const [testCode, setTestCode] = useState(config.starter_code);
+  const [showHint, setShowHint] = useState(true);
 
   // Auto-save with 1s debounce
   const handleConfigChange = useCallback((newConfig: PuzzleConfig) => {
@@ -52,6 +54,7 @@ export function LevelEditor() {
     try {
       const imported = await importConfigFromJson(file);
       setConfig(imported);
+      setTestCode(imported.starter_code);
       saveEditorState(imported);
       setSaved(true);
     } catch (err) {
@@ -78,6 +81,7 @@ export function LevelEditor() {
     if (pendingAction === "new") {
       const fresh = createDefaultConfig();
       setConfig(fresh);
+      setTestCode(fresh.starter_code);
       saveEditorState(fresh);
       setSaved(true);
       setPendingAction(null);
@@ -159,7 +163,7 @@ export function LevelEditor() {
       </header>
 
       {/* Tab bar */}
-      <div className="shrink-0 flex gap-1 px-4 pt-2 bg-white dark:bg-zinc-950">
+      <div className="shrink-0 flex items-center gap-1 px-4 pt-2 bg-white dark:bg-zinc-950">
         {tabs.map((tab) => (
           <button
             key={tab.id}
@@ -173,6 +177,19 @@ export function LevelEditor() {
             {tab.label}
           </button>
         ))}
+
+        {showHint && (
+          <div className="ml-auto flex items-center gap-1.5 px-2.5 py-1 text-xs text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 rounded-md">
+            <Download className="h-3 w-3 shrink-0" />
+            <span>Remember to <strong>download</strong> your level when done</span>
+            <button
+              onClick={() => setShowHint(false)}
+              className="shrink-0 p-0.5 text-amber-500 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-200 transition-colors cursor-pointer"
+            >
+              <X className="h-3 w-3" />
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Tab content */}
@@ -189,7 +206,7 @@ export function LevelEditor() {
           <ConfigTab config={config} onConfigChange={handleConfigChange} />
         )}
         {activeTab === "test" && (
-          <TestTab config={config} onConfigChange={handleConfigChange} />
+          <TestTab config={config} onConfigChange={handleConfigChange} code={testCode} onCodeChange={setTestCode} />
         )}
       </div>
 

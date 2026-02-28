@@ -264,6 +264,11 @@ pub enum GameAction {
         position: Position,
         item: TileItem,
     },
+    Bump {
+        position: Position,
+        direction: Direction,
+        message: String,
+    },
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef, useLayoutEffect } from "react";
+import { useState, useCallback, useEffect, useRef, useLayoutEffect, useMemo } from "react";
 import Editor from "@monaco-editor/react";
 import { Button } from "@/components/ui/button";
 import { GameGrid } from "@/components/game/game-grid";
@@ -21,6 +21,8 @@ import { Play, AlertCircle, Loader2, X, Code } from "lucide-react";
 interface TestTabProps {
   config: PuzzleConfig;
   onConfigChange: (config: PuzzleConfig) => void;
+  code: string;
+  onCodeChange: (code: string) => void;
 }
 
 function applyAction(action: GameAction, bot: BotState, grid: Grid) {
@@ -80,16 +82,23 @@ function applyAction(action: GameAction, bot: BotState, grid: Grid) {
         bot.diamonds_deposited += 1;
       }
       break;
+    case "bump":
+      bot.direction = action.direction;
+      bot.message = action.message;
+      break;
     case "wait":
     case "error":
       break;
   }
 }
 
-export function TestTab({ config, onConfigChange }: TestTabProps) {
+export function TestTab({ config, onConfigChange, code, onCodeChange }: TestTabProps) {
   const colorMode = useColorMode();
-  const [code, setCode] = useState(config.starter_code);
   const [actions, setActions] = useState<GameAction[]>([]);
+  const warnings = useMemo(
+    () => actions.filter((a) => a.type === "bump").map((a) => a.type === "bump" ? a.message : ""),
+    [actions],
+  );
   const [currentActionIndex, setCurrentActionIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [speed, setSpeed] = useState<PlaybackSpeed>(() => {
@@ -201,6 +210,7 @@ export function TestTab({ config, onConfigChange }: TestTabProps) {
           );
           break;
         }
+        newBotState.message = null;
         applyAction(action, newBotState, newGrid);
       }
     }
@@ -311,6 +321,7 @@ export function TestTab({ config, onConfigChange }: TestTabProps) {
             currentAction={currentActionIndex}
             totalActions={actions.length}
             disabled={isRunning}
+            warnings={warnings}
           />
         </div>
       </div>
@@ -323,7 +334,7 @@ export function TestTab({ config, onConfigChange }: TestTabProps) {
             language="bop"
             theme={colorMode === "dark" ? "vs-dark" : "vs"}
             value={code}
-            onChange={(val) => setCode(val ?? "")}
+            onChange={(val) => onCodeChange(val ?? "")}
             beforeMount={registerBopLanguage}
             options={{
               minimap: { enabled: false },

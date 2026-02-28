@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef, useLayoutEffect } from "react";
+import { useState, useCallback, useEffect, useRef, useLayoutEffect, useMemo } from "react";
 import Editor from "@monaco-editor/react";
 import { Button } from "@/components/ui/button";
 import { GameGrid } from "./game-grid";
@@ -85,6 +85,12 @@ export function PuzzlePlayground({
   const celebrationShownRef = useRef(false);
   const simulationErrorRef = useRef<SimulationError | null>(null);
   const saveTimerRef = useRef<number | null>(null);
+
+  // Collect warnings from bump actions
+  const warnings = useMemo(
+    () => actions.filter((a) => a.type === "bump").map((a) => a.type === "bump" ? a.message : ""),
+    [actions],
+  );
 
   // Left panel tab state: show tutorial (instructions) tab by default if tutorial content exists
   const hasTutorial = puzzle.tutorial !== null;
@@ -202,6 +208,7 @@ export function PuzzlePlayground({
           );
           break;
         }
+        newBotState.message = null;
         applyAction(action, newBotState, newGrid);
       }
     }
@@ -402,6 +409,7 @@ export function PuzzlePlayground({
                   currentAction={currentActionIndex}
                   totalActions={actions.length}
                   disabled={isRunning}
+                  warnings={warnings}
                 />
               </div>
             </>
@@ -555,6 +563,10 @@ function applyAction(action: GameAction, bot: BotState, grid: Grid) {
         bot.diamonds = Math.max(0, bot.diamonds - 1);
         bot.diamonds_deposited += 1;
       }
+      break;
+    case "bump":
+      bot.direction = action.direction;
+      bot.message = action.message;
       break;
     case "wait":
     case "error":

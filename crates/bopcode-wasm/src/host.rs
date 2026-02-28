@@ -120,20 +120,22 @@ impl BopCodeHost {
         let tile = self.grid.get_tile(to);
         match tile {
             None => {
-                self.halt_with_error(
-                    line,
-                    "Can't move there — it's blocked!",
-                    "Check what's ahead with look() before moving.",
-                );
+                self.bot.direction = direction;
+                self.actions.push(GameAction::Bump {
+                    position: from,
+                    direction,
+                    message: "Bonk! The path is blocked.".into(),
+                });
                 return Ok(Value::None);
             }
             Some(t) => match t.tile_type {
                 TileType::Wall => {
-                    self.halt_with_error(
-                        line,
-                        "Can't move there — it's blocked!",
-                        "Check what's ahead with look() before moving.",
-                    );
+                    self.bot.direction = direction;
+                    self.actions.push(GameAction::Bump {
+                        position: from,
+                        direction,
+                        message: "Bonk! The path is blocked.".into(),
+                    });
                     return Ok(Value::None);
                 }
                 TileType::LockedDoor => {

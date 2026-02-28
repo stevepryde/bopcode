@@ -54,7 +54,8 @@ export type GameAction =
   | { type: "error"; message: string }
   | { type: "fall_into_pit"; position: Position }
   | { type: "unlock"; position: Position }
-  | { type: "deposit"; position: Position; item: TileItem };
+  | { type: "deposit"; position: Position; item: TileItem }
+  | { type: "bump"; position: Position; direction: Direction; message: string };
 
 export interface SimulationError {
   line: number | null;

@@ -226,8 +226,16 @@ mod tests {
 
     #[test]
     fn test_move_into_wall() {
-        let err = run_err("move(\"left\")\nmove(\"left\")");
-        assert!(err.message.contains("blocked"));
+        // Moving into a wall/out-of-bounds should bump (not halt)
+        let result = run_ok("move(\"left\")\nmove(\"left\")\nsay(\"still running\")");
+        // Bot stays at (0,1) after the bump
+        assert_eq!(result.final_state.position, Position::new(0, 1));
+        // The say() after the bump should still execute
+        assert!(result.actions.iter().any(|a| matches!(a, GameAction::Bump { .. })));
+        assert!(result
+            .actions
+            .iter()
+            .any(|a| matches!(a, GameAction::Say { message } if message == "still running")));
     }
 
     #[test]

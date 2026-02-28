@@ -145,23 +145,20 @@ export function GameGrid({
       botState.direction
     );
 
-    // Draw speech bubble if bot has a message
-    if (botState.message) {
-      const onTopRow = botState.position.y === 0;
-      drawSpeechBubble(
-        ctx,
-        botState.position.x * tileSize + tileSize / 2,
-        onTopRow
-          ? botState.position.y * tileSize + tileSize + 10
-          : botState.position.y * tileSize - 10,
-        botState.message,
-        onTopRow
-      );
-    }
   }, [grid, botState, tileSize]);
 
+  // Speech bubble position (DOM overlay, not canvas)
+  const bubble = botState.message ? (() => {
+    const onTopRow = botState.position.y === 0;
+    const left = botState.position.x * tileSize + tileSize / 2;
+    const top = onTopRow
+      ? botState.position.y * tileSize + tileSize + 8
+      : botState.position.y * tileSize - 8;
+    return { message: botState.message, left, top, below: onTopRow };
+  })() : null;
+
   return (
-    <div className={`inline-block rounded-lg overflow-hidden border border-zinc-300 dark:border-zinc-600/40 shadow-lg ${className}`}>
+    <div className={`relative inline-block rounded-lg border border-zinc-300 dark:border-zinc-600/40 shadow-lg ${className}`}>
       <canvas
         ref={canvasRef}
         style={{
@@ -169,6 +166,28 @@ export function GameGrid({
           imageRendering: "pixelated",
         }}
       />
+      {bubble && (
+        <div
+          className="absolute z-10 pointer-events-none"
+          style={{
+            left: bubble.left,
+            top: bubble.top,
+            transform: bubble.below ? "translateX(-50%)" : "translateX(-50%) translateY(-100%)",
+          }}
+        >
+          {/* Tail */}
+          <div
+            className={`absolute left-1/2 -translate-x-1/2 w-0 h-0 ${
+              bubble.below
+                ? "bottom-full border-l-[5px] border-r-[5px] border-b-[5px] border-l-transparent border-r-transparent border-b-white dark:border-b-zinc-700"
+                : "top-full border-l-[5px] border-r-[5px] border-t-[5px] border-l-transparent border-r-transparent border-t-white dark:border-t-zinc-700"
+            }`}
+          />
+          <div className="px-2.5 py-1 rounded bg-white dark:bg-zinc-700 text-[11px] font-medium text-zinc-800 dark:text-zinc-100 whitespace-nowrap shadow-md">
+            {bubble.message}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -326,44 +345,3 @@ function drawBot(
   ctx.restore();
 }
 
-function drawSpeechBubble(
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  message: string,
-  below = false
-) {
-  const padding = 8;
-  ctx.font = "12px sans-serif";
-  const metrics = ctx.measureText(message);
-  const width = metrics.width + padding * 2;
-  const height = 20;
-
-  const bubbleX = x - width / 2;
-  const bubbleY = below ? y + 5 : y - height - 5;
-
-  // Bubble background
-  ctx.fillStyle = "#fff";
-  ctx.beginPath();
-  ctx.roundRect(bubbleX, bubbleY, width, height, 4);
-  ctx.fill();
-
-  // Bubble tail
-  ctx.beginPath();
-  if (below) {
-    ctx.moveTo(x - 5, bubbleY);
-    ctx.lineTo(x, bubbleY - 5);
-    ctx.lineTo(x + 5, bubbleY);
-  } else {
-    ctx.moveTo(x - 5, bubbleY + height);
-    ctx.lineTo(x, bubbleY + height + 5);
-    ctx.lineTo(x + 5, bubbleY + height);
-  }
-  ctx.fill();
-
-  // Text
-  ctx.fillStyle = "#000";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText(message, x, bubbleY + height / 2);
-}
