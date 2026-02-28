@@ -21,5 +21,8 @@ export default defineConfig({
   },
   server: {
     port: 8080,
+    watch: {
+      ignored: ["**/routeTree.gen.ts"],
+    },
   },
 });
