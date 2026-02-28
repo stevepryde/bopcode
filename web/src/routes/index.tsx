@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Star, Pencil, Upload, X } from "lucide-react";
+import { Star, Pencil, Upload, X, Globe, Lock, Zap } from "lucide-react";
 import { useMemo, useState, useRef } from "react";
 import { getWorlds, getWorldLevels } from "@/lib/wasm";
 import { getProgress } from "@/lib/progress";
@@ -63,7 +63,7 @@ function HomePage() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-white dark:bg-zinc-950 text-zinc-900 dark:text-white">
+    <div className="min-h-screen w-full bg-white dark:bg-zinc-950 text-zinc-900 dark:text-white flex flex-col">
       {/* Header */}
       <header className="bg-zinc-50 dark:bg-zinc-900/80 border-b border-zinc-200 dark:border-zinc-800">
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center gap-2">
@@ -92,15 +92,48 @@ function HomePage() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-5xl mx-auto px-6 py-10">
+      <main className="flex-1 max-w-5xl mx-auto px-6 py-10 w-full">
         {/* Hero */}
         <div className="mb-12">
-          <h2 className="text-3xl font-bold mb-2">
-            Welcome to bopcode
+          <h2 className="text-3xl font-bold mb-3">
+            Learn to code by solving puzzles
           </h2>
-          <p className="text-zinc-500 dark:text-zinc-400 text-lg">
-            Learn to code by guiding a bot through puzzles.
+          <p className="text-zinc-500 dark:text-zinc-400 text-lg max-w-2xl mb-6">
+            bopcode teaches programming fundamentals through a simple language
+            called Bop. Write code to guide a bot through grid-based puzzles,
+            building real skills you'll carry into Python, JavaScript, and
+            beyond.
           </p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-2xl">
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-zinc-50 dark:bg-zinc-900/50">
+              <Zap className="h-5 w-5 text-amber-500 mt-0.5 shrink-0" />
+              <div>
+                <p className="text-sm font-medium">No setup needed</p>
+                <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                  Runs entirely in your browser. No installs, no accounts.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-zinc-50 dark:bg-zinc-900/50">
+              <Lock className="h-5 w-5 text-teal-500 mt-0.5 shrink-0" />
+              <div>
+                <p className="text-sm font-medium">Completely private</p>
+                <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                  No tracking, no data collection. Your code stays on your
+                  device.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-zinc-50 dark:bg-zinc-900/50">
+              <Globe className="h-5 w-5 text-indigo-500 mt-0.5 shrink-0" />
+              <div>
+                <p className="text-sm font-medium">100% free</p>
+                <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                  No paywalls, no ads. Just puzzles and code.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Worlds Grid */}
@@ -169,6 +202,35 @@ function HomePage() {
           </div>
         </section>
       </main>
+
+      {/* Footer */}
+      <footer className="relative z-10 border-t border-zinc-200 dark:border-zinc-800">
+        <div className="max-w-5xl mx-auto px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-zinc-400 dark:text-zinc-500">
+          <p>&copy; {new Date().getFullYear()} bopcode</p>
+          <div className="flex items-center gap-4">
+            <a
+              href="/privacy"
+              className="hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
+            >
+              Privacy Policy
+            </a>
+            <a
+              href="/terms"
+              className="hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
+            >
+              Terms of Service
+            </a>
+            <a
+              href="https://github.com/probablysteve/bopcode"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
+            >
+              GitHub
+            </a>
+          </div>
+        </div>
+      </footer>
 
       {/* Play Custom Level Modal */}
       {showCustomModal && (
