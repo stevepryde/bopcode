@@ -1,4 +1,5 @@
 import type { PuzzleConfig, Tile } from "@/types/game";
+import { parseLevel, serializeLevel } from "@/lib/wasm";
 
 const STORAGE_KEY = "bopcode_editor";
 
@@ -92,7 +93,7 @@ export function resizeGrid(config: PuzzleConfig, newW: number, newH: number): Pu
 }
 
 export function downloadConfigAsJson(config: PuzzleConfig): void {
-  const json = JSON.stringify(config, null, 2);
+  const json = serializeLevel(config);
   const blob = new Blob([json], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -107,8 +108,27 @@ export function importConfigFromJson(file: File): Promise<PuzzleConfig> {
     const reader = new FileReader();
     reader.onload = () => {
       try {
-        const config = JSON.parse(reader.result as string) as PuzzleConfig;
-        // Basic validation
+        const text = reader.result as string;
+        const parsed = JSON.parse(text);
+
+        // Detect concise course format by presence of `map` array
+        if (Array.isArray(parsed.map)) {
+          try {
+            const config = parseLevel(text);
+            if (!config.theme) config.theme = "grassy_plains";
+            resolve(config);
+          } catch (e) {
+            reject(
+              new Error(
+                `Invalid level: ${e instanceof Error ? e.message : String(e)}`,
+              ),
+            );
+          }
+          return;
+        }
+
+        // Fall back to verbose PuzzleConfig format (backward compat)
+        const config = parsed as PuzzleConfig;
         if (!config.grid || !config.bot_start || !config.completion) {
           reject(new Error("Invalid puzzle config: missing required fields"));
           return;
@@ -117,7 +137,6 @@ export function importConfigFromJson(file: File): Promise<PuzzleConfig> {
           reject(new Error("Invalid puzzle config: missing grid data"));
           return;
         }
-        // Ensure null/optional fields have sensible defaults
         if (config.hint === undefined) config.hint = null;
         if (config.tutorial === undefined) config.tutorial = null;
         if (config.bot_start.message === undefined) config.bot_start.message = null;

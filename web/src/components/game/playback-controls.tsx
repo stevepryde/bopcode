@@ -53,7 +53,7 @@ export function PlaybackControls({
           variant="ghost"
           size="sm"
           onClick={isPlaying ? onPause : onPlay}
-          disabled={disabled || totalActions === 0}
+          disabled={disabled}
           className="h-7 w-7 p-0"
         >
           {isPlaying ? (
@@ -68,7 +68,7 @@ export function PlaybackControls({
           variant="ghost"
           size="sm"
           onClick={onStep}
-          disabled={disabled || isPlaying || currentAction >= totalActions}
+          disabled={disabled || isPlaying || (totalActions > 0 && currentAction >= totalActions)}
           className="h-7 w-7 p-0"
           title="Step forward"
         >

@@ -82,6 +82,36 @@ pub fn get_level(level_id: &str) -> JsValue {
     }
 }
 
+#[wasm_bindgen]
+pub fn parse_level(json_string: &str) -> JsValue {
+    match levels::parse_level_from_json(json_string) {
+        Ok(config) => serde_wasm_bindgen::to_value(&config).unwrap_or(JsValue::NULL),
+        Err(e) => {
+            let error_obj = serde_json::json!({ "error": e.to_string() });
+            serde_wasm_bindgen::to_value(&error_obj).unwrap_or(JsValue::NULL)
+        }
+    }
+}
+
+#[wasm_bindgen]
+pub fn serialize_level(config: JsValue) -> JsValue {
+    let puzzle: models::PuzzleConfig = match serde_wasm_bindgen::from_value(config) {
+        Ok(p) => p,
+        Err(e) => {
+            let error_obj = serde_json::json!({ "error": format!("Invalid puzzle config: {e}") });
+            return serde_wasm_bindgen::to_value(&error_obj).unwrap_or(JsValue::NULL);
+        }
+    };
+    let course_level = levels::config_to_course_level(&puzzle);
+    match serde_json::to_string_pretty(&course_level) {
+        Ok(json) => JsValue::from_str(&json),
+        Err(e) => {
+            let error_obj = serde_json::json!({ "error": format!("Serialization failed: {e}") });
+            serde_wasm_bindgen::to_value(&error_obj).unwrap_or(JsValue::NULL)
+        }
+    }
+}
+
 // ─── Tests ────────────────────────────────────────────────────────────────
 
 #[cfg(test)]
@@ -112,6 +142,7 @@ mod tests {
             starter_code: String::new(),
             hint: None,
             tutorial: None,
+            theme: None,
         };
         run_sim(code, &puzzle)
     }
@@ -253,6 +284,7 @@ mod tests {
             starter_code: String::new(),
             hint: None,
             tutorial: None,
+            theme: None,
         };
         let result = run_sim("move(\"right\")\ngrab()", &puzzle);
         assert!(result.error.is_none());
@@ -378,5 +410,110 @@ repeat 3 { move("right") }"#;
         let result = run_sim(code, &puzzle);
         assert!(result.error.is_none(), "Error: {:?}", result.error);
         assert!(result.puzzle_completed);
+    }
+
+    // ─── Round-trip tests ────────────────────────────────────────────
+
+    #[test]
+    fn test_ascii_map_round_trip() {
+        let map = vec![
+            "#S..G#".to_string(),
+            "#.*..#".to_string(),
+            "######".to_string(),
+        ];
+        let (grid, bot, goal) =
+            levels::parse_ascii_map_public("test", &map).expect("parse should succeed");
+        let serialized = levels::grid_to_ascii_map(&grid, &bot);
+        assert_eq!(map, serialized);
+        assert!(goal.is_some());
+    }
+
+    #[test]
+    fn test_ascii_map_direction_variants() {
+        for (ch, dir) in [('<', Direction::Left), ('^', Direction::Up), ('v', Direction::Down)] {
+            let map = vec![format!("#{ch}."), "###".to_string()];
+            let (grid, bot, _) =
+                levels::parse_ascii_map_public("test", &map).expect("parse should succeed");
+            assert_eq!(bot.direction, dir);
+            let serialized = levels::grid_to_ascii_map(&grid, &bot);
+            assert_eq!(map, serialized);
+        }
+    }
+
+    #[test]
+    fn test_full_level_json_round_trip() {
+        let json = r#"{
+            "level_id": "test-rt",
+            "title": "Round Trip",
+            "description": "Test round-trip",
+            "map": ["S..*G"],
+            "completion": "reach_goal",
+            "stars": { "max_steps": 10 },
+            "starter_code": "move(\"right\")"
+        }"#;
+        let config = levels::parse_level_from_json(json).expect("parse should succeed");
+        assert_eq!(config.puzzle_id, "test-rt");
+        assert_eq!(config.title, "Round Trip");
+
+        let course_level = levels::config_to_course_level(&config);
+        let re_json = serde_json::to_string_pretty(&course_level).unwrap();
+        let config2 = levels::parse_level_from_json(&re_json).expect("re-parse should succeed");
+        assert_eq!(config.puzzle_id, config2.puzzle_id);
+        assert_eq!(config.title, config2.title);
+        assert_eq!(config.grid.width, config2.grid.width);
+        assert_eq!(config.grid.height, config2.grid.height);
+        assert_eq!(config.bot_start.position, config2.bot_start.position);
+        assert_eq!(config.bot_start.direction, config2.bot_start.direction);
+    }
+
+    #[test]
+    fn test_all_builtin_levels_round_trip() {
+        let all = levels::get_all_puzzles();
+        for puzzle in &all {
+            let course = levels::config_to_course_level(puzzle);
+            let json = serde_json::to_string(&course).unwrap();
+            let reparsed = levels::parse_level_from_json(&json).unwrap_or_else(|e| {
+                panic!("Round-trip failed for '{}': {e}", puzzle.puzzle_id)
+            });
+            assert_eq!(
+                puzzle.grid.width, reparsed.grid.width,
+                "Width mismatch for '{}'",
+                puzzle.puzzle_id
+            );
+            assert_eq!(
+                puzzle.grid.height, reparsed.grid.height,
+                "Height mismatch for '{}'",
+                puzzle.puzzle_id
+            );
+            assert_eq!(
+                puzzle.bot_start.position, reparsed.bot_start.position,
+                "Bot position mismatch for '{}'",
+                puzzle.puzzle_id
+            );
+            assert_eq!(
+                puzzle.bot_start.direction, reparsed.bot_start.direction,
+                "Bot direction mismatch for '{}'",
+                puzzle.puzzle_id
+            );
+        }
+    }
+
+    #[test]
+    fn test_parse_level_invalid_json() {
+        let result = levels::parse_level_from_json("not json");
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_parse_level_empty_map() {
+        let json = r#"{
+            "level_id": "bad",
+            "title": "Bad",
+            "description": "Bad",
+            "map": [],
+            "completion": "reach_goal"
+        }"#;
+        let result = levels::parse_level_from_json(json);
+        assert!(result.is_err());
     }
 }

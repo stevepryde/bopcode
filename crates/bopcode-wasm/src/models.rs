@@ -364,6 +364,8 @@ pub struct PuzzleConfig {
     pub starter_code: String,
     pub hint: Option<String>,
     pub tutorial: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub theme: Option<WorldTheme>,
 }
 
 // ─── Frontend query types ────────────────────────────────────────────────────

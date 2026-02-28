@@ -77,6 +77,7 @@ export function BopReference() {
               <Fn name="diamond_ahead()" desc="True if diamond ahead" />
               <Fn name="diamond_here()" desc="True if diamond here" />
               <Fn name="pit_ahead()" desc="True if pit ahead" />
+              <Fn name="tile_type()" desc="Type of current tile" />
               <Fn name="position()" desc="[x, y] of bot" />
               <Fn name='facing()' desc='"up", "down", "left", or "right"' />
               <Fn name="grid_size()" desc="[width, height] of grid" />

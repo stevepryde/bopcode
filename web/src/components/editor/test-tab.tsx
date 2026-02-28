@@ -237,7 +237,7 @@ export function TestTab({ config, onConfigChange, code, onCodeChange }: TestTabP
     }
   }, [currentActionIndex, actions, config.bot_start, config.grid, puzzleCompleted]);
 
-  const handleRunCode = useCallback(() => {
+  const handleRunCode = useCallback((autoPlay = true) => {
     setIsRunning(true);
     setError(null);
     setActions([]);
@@ -263,10 +263,10 @@ export function TestTab({ config, onConfigChange, code, onCodeChange }: TestTabP
       }
 
       if (result.actions.length > 0) {
-        setCurrentActionIndex(0);
+        setCurrentActionIndex(autoPlay ? 0 : 1);
         setBotState(config.bot_start);
         setGrid(config.grid);
-        setIsPlaying(true);
+        if (autoPlay) setIsPlaying(true);
       }
     } catch (err) {
       setError({
@@ -344,9 +344,19 @@ export function TestTab({ config, onConfigChange, code, onCodeChange }: TestTabP
         <div className="shrink-0 pt-2">
           <PlaybackControls
             isPlaying={isPlaying}
-            onPlay={() => setIsPlaying(true)}
+            onPlay={() => {
+              if (actions.length === 0) {
+                handleRunCode(true);
+              } else {
+                setIsPlaying(true);
+              }
+            }}
             onPause={() => setIsPlaying(false)}
             onStep={() => {
+              if (actions.length === 0) {
+                handleRunCode(false);
+                return;
+              }
               if (currentActionIndex < actions.length) setCurrentActionIndex((p) => p + 1);
             }}
             onReset={() => {
@@ -414,7 +424,7 @@ export function TestTab({ config, onConfigChange, code, onCodeChange }: TestTabP
 
         <div className="shrink-0 pt-2 flex gap-2">
           <Button
-            onClick={handleRunCode}
+            onClick={() => handleRunCode()}
             disabled={isRunning}
             className="flex-1 h-12 text-base font-bold"
           >

@@ -522,6 +522,23 @@ impl BopCodeHost {
         Ok(Value::Number(count as f64))
     }
 
+    fn builtin_tile_type(&self, args: &[Value], line: u32) -> Result<Value, BopError> {
+        self.expect_args("tile_type", args, 0, line)?;
+        let result = match self.grid.get_tile(self.bot.position) {
+            None => "wall",
+            Some(tile) => match tile.tile_type {
+                TileType::Floor => "floor",
+                TileType::Wall => "wall",
+                TileType::Goal => "goal",
+                TileType::Pit => "pit",
+                TileType::LockedDoor => "locked_door",
+                TileType::GemVault => "gem_vault",
+                TileType::DiamondVault => "diamond_vault",
+            },
+        };
+        Ok(Value::new_str(result.to_string()))
+    }
+
     fn builtin_grid_size(&self, args: &[Value], line: u32) -> Result<Value, BopError> {
         self.expect_args("grid_size", args, 0, line)?;
         Ok(Value::new_array(vec![
@@ -559,6 +576,7 @@ impl BopHost for BopCodeHost {
             "has_diamond" => self.builtin_has_diamond(args, line),
             "inventory" => self.builtin_inventory(args, line),
             "inventory_count" => self.builtin_inventory_count(args, line),
+            "tile_type" => self.builtin_tile_type(args, line),
             "grid_size" => self.builtin_grid_size(args, line),
             _ => return None,
         };

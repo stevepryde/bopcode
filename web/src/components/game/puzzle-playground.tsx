@@ -239,9 +239,10 @@ export function PuzzlePlayground({
   }, [currentActionIndex, actions, puzzle.bot_start, puzzle.grid, puzzleCompleted, starsMet, onComplete]);
 
   // Run code handler -- calls WASM synchronously, then stores actions for playback
-  const handleRunCode = useCallback(() => {
+  const handleRunCode = useCallback((autoPlay = true) => {
     // Reset state before running
     setIsRunning(true);
+    setIsPlaying(false);
     setError(null);
     setActions([]);
     setCurrentActionIndex(0);
@@ -274,10 +275,10 @@ export function PuzzlePlayground({
 
       // Start playback when we have actions
       if (result.actions.length > 0) {
-        setCurrentActionIndex(0);
+        setCurrentActionIndex(autoPlay ? 0 : 1);
         setBotState(puzzle.bot_start);
         setGrid(puzzle.grid);
-        setIsPlaying(true);
+        if (autoPlay) setIsPlaying(true);
       }
     } catch (err) {
       setError({
@@ -292,9 +293,19 @@ export function PuzzlePlayground({
   }, [puzzle.puzzle_id, code, puzzle.bot_start, puzzle.grid, puzzle.star_objectives]);
 
   // Playback handlers
-  const handlePlay = () => setIsPlaying(true);
+  const handlePlay = () => {
+    if (actions.length === 0) {
+      handleRunCode(true);
+    } else {
+      setIsPlaying(true);
+    }
+  };
   const handlePause = () => setIsPlaying(false);
   const handleStep = () => {
+    if (actions.length === 0) {
+      handleRunCode(false);
+      return;
+    }
     if (currentActionIndex < actions.length) {
       setCurrentActionIndex((prev) => prev + 1);
     }
@@ -512,7 +523,7 @@ export function PuzzlePlayground({
           {/* Run Button */}
           <div className="shrink-0 pt-2">
             <Button
-              onClick={handleRunCode}
+              onClick={() => handleRunCode()}
               disabled={isRunning}
               className="w-full h-12 text-base font-bold"
             >

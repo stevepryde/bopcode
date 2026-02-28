@@ -4,7 +4,7 @@ use crate::models::{
     BotState, Direction, Grid, LevelSummary, Position, PuzzleConfig, PuzzleObjective, Tile,
     TileItem, TileType, WorldInfo, WorldTheme, WorldUnlock,
 };
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 const BOP_FOUNDATIONS_DATA: &str = include_str!("../data/courses/bop-foundations.json");
 const BOP_OPERATIONS_DATA: &str = include_str!("../data/courses/bop-operations.json");
@@ -21,13 +21,13 @@ pub struct HardcodedWorldDefinition {
     pub unlock: WorldUnlock,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 struct CoursePackData {
     world: CourseWorldData,
     levels: Vec<CourseLevelData>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 struct CourseWorldData {
     world_id: String,
     title: String,
@@ -38,31 +38,35 @@ struct CourseWorldData {
     sort_order: u32,
 }
 
-#[derive(Debug, Deserialize)]
-struct CourseLevelData {
-    level_id: String,
-    title: String,
-    description: String,
-    map: Vec<String>,
-    completion: CourseCompletion,
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CourseLevelData {
+    pub level_id: String,
+    pub title: String,
+    pub description: String,
+    pub map: Vec<String>,
+    pub completion: CourseCompletion,
     #[serde(default)]
-    stars: CourseStars,
+    pub stars: CourseStars,
     #[serde(default)]
-    starter_code: String,
-    hint: Option<String>,
-    tutorial: Option<String>,
+    pub starter_code: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub hint: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub tutorial: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub theme: Option<WorldTheme>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
-enum CourseCompletion {
+pub enum CourseCompletion {
     Preset(CourseCompletionPreset),
     Objective(CourseObjectiveSpec),
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
-enum CourseCompletionPreset {
+pub enum CourseCompletionPreset {
     ReachGoal,
     CollectAllGems,
     CollectAllGemsAndReachGoal,
@@ -72,9 +76,9 @@ enum CourseCompletionPreset {
     DepositAllDiamondsAndReachGoal,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "type", rename_all = "snake_case")]
-enum CourseObjectiveSpec {
+pub enum CourseObjectiveSpec {
     ReachGoal,
     ReachPosition {
         x: i32,
@@ -88,12 +92,33 @@ enum CourseObjectiveSpec {
     },
 }
 
-#[derive(Debug, Default, Deserialize)]
-struct CourseStars {
-    #[serde(default)]
-    collect_all_gems: bool,
-    max_instructions: Option<u32>,
-    max_steps: Option<u32>,
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct CourseStars {
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub collect_all_gems: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub max_instructions: Option<u32>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub max_steps: Option<u32>,
+}
+
+// ─── Error type ────────────────────────────────────────────────────────
+
+#[derive(Debug)]
+pub enum LevelParseError {
+    InvalidJson(String),
+    InvalidMap(String),
+    InvalidCompletion(String),
+}
+
+impl std::fmt::Display for LevelParseError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            LevelParseError::InvalidJson(msg) => write!(f, "Invalid JSON: {msg}"),
+            LevelParseError::InvalidMap(msg) => write!(f, "Invalid map: {msg}"),
+            LevelParseError::InvalidCompletion(msg) => write!(f, "Invalid completion: {msg}"),
+        }
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -137,7 +162,14 @@ fn parse_course_pack(data: &str, file_name: &str) -> ParsedCoursePack {
         unlock: WorldUnlock::Open,
     };
 
-    let puzzles: Vec<PuzzleConfig> = data.levels.into_iter().map(parse_course_level).collect();
+    let puzzles: Vec<PuzzleConfig> = data
+        .levels
+        .into_iter()
+        .map(|l| {
+            let id = l.level_id.clone();
+            parse_course_level(l).unwrap_or_else(|e| panic!("{file_name} level '{id}': {e}"))
+        })
+        .collect();
     let puzzle_ids: Vec<String> = puzzles.iter().map(|p| p.puzzle_id.clone()).collect();
     let puzzles_by_id: HashMap<String, PuzzleConfig> = puzzles
         .iter()
@@ -153,10 +185,10 @@ fn parse_course_pack(data: &str, file_name: &str) -> ParsedCoursePack {
     }
 }
 
-fn parse_course_level(level: CourseLevelData) -> PuzzleConfig {
-    let (grid, bot_start, goal_position) = parse_ascii_map(&level.level_id, &level.map);
+pub fn parse_course_level(level: CourseLevelData) -> Result<PuzzleConfig, LevelParseError> {
+    let (grid, bot_start, goal_position) = parse_ascii_map(&level.level_id, &level.map)?;
 
-    let mut completion = parse_course_completion(&level.level_id, level.completion, goal_position);
+    let mut completion = parse_course_completion(&level.level_id, level.completion, goal_position)?;
 
     // If collect_all_gems is specified, fold it into the completion objective
     if level.stars.collect_all_gems {
@@ -176,7 +208,7 @@ fn parse_course_level(level: CourseLevelData) -> PuzzleConfig {
         star_objectives.push(PuzzleObjective::MaxSteps { steps });
     }
 
-    PuzzleConfig {
+    Ok(PuzzleConfig {
         puzzle_id: level.level_id,
         title: level.title,
         description: level.description,
@@ -187,7 +219,8 @@ fn parse_course_level(level: CourseLevelData) -> PuzzleConfig {
         starter_code: level.starter_code,
         hint: level.hint,
         tutorial: level.tutorial,
-    }
+        theme: level.theme,
+    })
 }
 
 fn completion_requires_collect_all_gems(objective: &PuzzleObjective) -> bool {
@@ -204,23 +237,29 @@ fn parse_course_completion(
     level_id: &str,
     completion: CourseCompletion,
     goal_position: Option<Position>,
-) -> PuzzleObjective {
-    fn reach_goal(level_id: &str, goal_position: Option<Position>) -> PuzzleObjective {
-        let goal = goal_position
-            .unwrap_or_else(|| panic!("Level '{level_id}' uses reach_goal but has no goal tile"));
-        PuzzleObjective::ReachPosition {
+) -> Result<PuzzleObjective, LevelParseError> {
+    fn reach_goal(
+        level_id: &str,
+        goal_position: Option<Position>,
+    ) -> Result<PuzzleObjective, LevelParseError> {
+        let goal = goal_position.ok_or_else(|| {
+            LevelParseError::InvalidCompletion(format!(
+                "Level '{level_id}' uses reach_goal but has no goal tile"
+            ))
+        })?;
+        Ok(PuzzleObjective::ReachPosition {
             x: goal.x,
             y: goal.y,
-        }
+        })
     }
 
     fn parse_spec(
         level_id: &str,
         spec: CourseObjectiveSpec,
         goal_position: Option<Position>,
-    ) -> PuzzleObjective {
-        match spec {
-            CourseObjectiveSpec::ReachGoal => reach_goal(level_id, goal_position),
+    ) -> Result<PuzzleObjective, LevelParseError> {
+        Ok(match spec {
+            CourseObjectiveSpec::ReachGoal => reach_goal(level_id, goal_position)?,
             CourseObjectiveSpec::ReachPosition { x, y } => PuzzleObjective::ReachPosition { x, y },
             CourseObjectiveSpec::CollectAllGems => PuzzleObjective::CollectAllGems,
             CourseObjectiveSpec::DepositAllGems => PuzzleObjective::DepositAllGems,
@@ -229,49 +268,57 @@ fn parse_course_completion(
                 conditions: conditions
                     .into_iter()
                     .map(|condition| parse_spec(level_id, condition, goal_position))
-                    .collect(),
+                    .collect::<Result<Vec<_>, _>>()?,
             },
-        }
+        })
     }
 
     match completion {
         CourseCompletion::Preset(preset) => match preset {
             CourseCompletionPreset::ReachGoal => reach_goal(level_id, goal_position),
-            CourseCompletionPreset::CollectAllGems => PuzzleObjective::CollectAllGems,
-            CourseCompletionPreset::CollectAllGemsAndReachGoal => PuzzleObjective::All {
+            CourseCompletionPreset::CollectAllGems => Ok(PuzzleObjective::CollectAllGems),
+            CourseCompletionPreset::CollectAllGemsAndReachGoal => Ok(PuzzleObjective::All {
                 conditions: vec![
                     PuzzleObjective::CollectAllGems,
-                    reach_goal(level_id, goal_position),
+                    reach_goal(level_id, goal_position)?,
                 ],
-            },
-            CourseCompletionPreset::DepositAllGems => PuzzleObjective::DepositAllGems,
-            CourseCompletionPreset::DepositAllDiamonds => PuzzleObjective::DepositAllDiamonds,
-            CourseCompletionPreset::DepositAllGemsAndReachGoal => PuzzleObjective::All {
+            }),
+            CourseCompletionPreset::DepositAllGems => Ok(PuzzleObjective::DepositAllGems),
+            CourseCompletionPreset::DepositAllDiamonds => Ok(PuzzleObjective::DepositAllDiamonds),
+            CourseCompletionPreset::DepositAllGemsAndReachGoal => Ok(PuzzleObjective::All {
                 conditions: vec![
                     PuzzleObjective::DepositAllGems,
-                    reach_goal(level_id, goal_position),
+                    reach_goal(level_id, goal_position)?,
                 ],
-            },
-            CourseCompletionPreset::DepositAllDiamondsAndReachGoal => PuzzleObjective::All {
+            }),
+            CourseCompletionPreset::DepositAllDiamondsAndReachGoal => Ok(PuzzleObjective::All {
                 conditions: vec![
                     PuzzleObjective::DepositAllDiamonds,
-                    reach_goal(level_id, goal_position),
+                    reach_goal(level_id, goal_position)?,
                 ],
-            },
+            }),
         },
         CourseCompletion::Objective(spec) => parse_spec(level_id, spec, goal_position),
     }
 }
 
-fn parse_ascii_map(level_id: &str, rows: &[String]) -> (Grid, BotState, Option<Position>) {
-    assert!(
-        !rows.is_empty(),
-        "Level '{level_id}' map must have at least one row"
-    );
+fn parse_ascii_map(
+    level_id: &str,
+    rows: &[String],
+) -> Result<(Grid, BotState, Option<Position>), LevelParseError> {
+    if rows.is_empty() {
+        return Err(LevelParseError::InvalidMap(format!(
+            "Level '{level_id}' map must have at least one row"
+        )));
+    }
 
     let height = rows.len() as u32;
     let width = rows[0].chars().count() as u32;
-    assert!(width > 0, "Level '{level_id}' map rows must not be empty");
+    if width == 0 {
+        return Err(LevelParseError::InvalidMap(format!(
+            "Level '{level_id}' map rows must not be empty"
+        )));
+    }
 
     let mut start: Option<BotState> = None;
     let mut goal_position: Option<Position> = None;
@@ -279,10 +326,11 @@ fn parse_ascii_map(level_id: &str, rows: &[String]) -> (Grid, BotState, Option<P
 
     for (y, row) in rows.iter().enumerate() {
         let row_width = row.chars().count() as u32;
-        assert_eq!(
-            row_width, width,
-            "Level '{level_id}' map rows must all have equal width"
-        );
+        if row_width != width {
+            return Err(LevelParseError::InvalidMap(format!(
+                "Level '{level_id}' map rows must all have equal width"
+            )));
+        }
 
         let mut parsed_row = Vec::with_capacity(width as usize);
         for (x, c) in row.chars().enumerate() {
@@ -329,58 +377,60 @@ fn parse_ascii_map(level_id: &str, rows: &[String]) -> (Grid, BotState, Option<P
                     tile.item = Some(TileItem::Diamond);
                     tile
                 }
-                'S' => {
-                    assert!(
-                        start.is_none(),
-                        "Level '{level_id}' map must contain only one start tile"
-                    );
+                'S' | '>' => {
+                    if start.is_some() {
+                        return Err(LevelParseError::InvalidMap(format!(
+                            "Level '{level_id}' map must contain only one start tile"
+                        )));
+                    }
                     start = Some(BotState::new(pos, Direction::Right));
                     Tile::floor()
                 }
                 '^' => {
-                    assert!(
-                        start.is_none(),
-                        "Level '{level_id}' map must contain only one start tile"
-                    );
+                    if start.is_some() {
+                        return Err(LevelParseError::InvalidMap(format!(
+                            "Level '{level_id}' map must contain only one start tile"
+                        )));
+                    }
                     start = Some(BotState::new(pos, Direction::Up));
                     Tile::floor()
                 }
                 'v' => {
-                    assert!(
-                        start.is_none(),
-                        "Level '{level_id}' map must contain only one start tile"
-                    );
+                    if start.is_some() {
+                        return Err(LevelParseError::InvalidMap(format!(
+                            "Level '{level_id}' map must contain only one start tile"
+                        )));
+                    }
                     start = Some(BotState::new(pos, Direction::Down));
                     Tile::floor()
                 }
                 '<' => {
-                    assert!(
-                        start.is_none(),
-                        "Level '{level_id}' map must contain only one start tile"
-                    );
+                    if start.is_some() {
+                        return Err(LevelParseError::InvalidMap(format!(
+                            "Level '{level_id}' map must contain only one start tile"
+                        )));
+                    }
                     start = Some(BotState::new(pos, Direction::Left));
                     Tile::floor()
                 }
-                '>' => {
-                    assert!(
-                        start.is_none(),
-                        "Level '{level_id}' map must contain only one start tile"
-                    );
-                    start = Some(BotState::new(pos, Direction::Right));
-                    Tile::floor()
+                _ => {
+                    return Err(LevelParseError::InvalidMap(format!(
+                        "Level '{level_id}' map has unsupported tile '{c}'"
+                    )));
                 }
-                _ => panic!("Level '{level_id}' map has unsupported tile '{c}'"),
             };
             parsed_row.push(tile);
         }
         tiles.push(parsed_row);
     }
 
-    let bot_start = start.unwrap_or_else(|| {
-        panic!("Level '{level_id}' map must contain one start tile (S, <, >, ^, or v)")
-    });
+    let bot_start = start.ok_or_else(|| {
+        LevelParseError::InvalidMap(format!(
+            "Level '{level_id}' map must contain one start tile (S, <, >, ^, or v)"
+        ))
+    })?;
 
-    (
+    Ok((
         Grid {
             width,
             height,
@@ -388,7 +438,7 @@ fn parse_ascii_map(level_id: &str, rows: &[String]) -> (Grid, BotState, Option<P
         },
         bot_start,
         goal_position,
-    )
+    ))
 }
 
 pub fn get_hardcoded_worlds() -> Vec<HardcodedWorldDefinition> {
@@ -475,6 +525,220 @@ pub fn get_world_levels(world_id: &str) -> Vec<LevelSummary> {
             })
         })
         .collect()
+}
+
+// ─── Serialization (PuzzleConfig → CourseLevelData) ──────────────────────
+
+pub fn grid_to_ascii_map(grid: &Grid, bot_start: &BotState) -> Vec<String> {
+    let mut rows = Vec::with_capacity(grid.height as usize);
+    for y in 0..grid.height {
+        let mut row = String::with_capacity(grid.width as usize);
+        for x in 0..grid.width {
+            let pos = Position::new(x as i32, y as i32);
+            // Check if this is the bot start position
+            if bot_start.position == pos {
+                let c = match bot_start.direction {
+                    Direction::Right => 'S',
+                    Direction::Left => '<',
+                    Direction::Up => '^',
+                    Direction::Down => 'v',
+                };
+                row.push(c);
+                continue;
+            }
+            let tile = &grid.tiles[y as usize][x as usize];
+            let c = match (&tile.tile_type, &tile.item) {
+                (TileType::Wall, _) => '#',
+                (TileType::Pit, _) => 'P',
+                (TileType::LockedDoor, _) => 'D',
+                (TileType::GemVault, _) => 'V',
+                (TileType::DiamondVault, _) => 'W',
+                (TileType::Goal, Some(TileItem::Gem)) => '+',
+                (TileType::Goal, _) => 'G',
+                (TileType::Floor, Some(TileItem::Gem)) => '*',
+                (TileType::Floor, Some(TileItem::Key)) => 'K',
+                (TileType::Floor, Some(TileItem::Diamond)) => 'R',
+                (TileType::Floor, None) => '.',
+            };
+            row.push(c);
+        }
+        rows.push(row);
+    }
+    rows
+}
+
+pub fn objective_to_course_completion(
+    objective: &PuzzleObjective,
+    grid: &Grid,
+) -> CourseCompletion {
+    // Find goal position in grid for detecting reach_goal pattern
+    let goal_position = find_goal_position(grid);
+
+    if let Some(preset) = detect_preset(objective, goal_position) {
+        return CourseCompletion::Preset(preset);
+    }
+
+    CourseCompletion::Objective(objective_to_spec(objective, goal_position))
+}
+
+fn find_goal_position(grid: &Grid) -> Option<Position> {
+    for (y, row) in grid.tiles.iter().enumerate() {
+        for (x, tile) in row.iter().enumerate() {
+            if tile.tile_type == TileType::Goal {
+                return Some(Position::new(x as i32, y as i32));
+            }
+        }
+    }
+    None
+}
+
+fn is_reach_goal(objective: &PuzzleObjective, goal: Option<Position>) -> bool {
+    if let (PuzzleObjective::ReachPosition { x, y }, Some(g)) = (objective, goal) {
+        *x == g.x && *y == g.y
+    } else {
+        false
+    }
+}
+
+fn detect_preset(
+    objective: &PuzzleObjective,
+    goal: Option<Position>,
+) -> Option<CourseCompletionPreset> {
+    // Simple presets
+    if is_reach_goal(objective, goal) {
+        return Some(CourseCompletionPreset::ReachGoal);
+    }
+    if matches!(objective, PuzzleObjective::CollectAllGems) {
+        return Some(CourseCompletionPreset::CollectAllGems);
+    }
+    if matches!(objective, PuzzleObjective::DepositAllGems) {
+        return Some(CourseCompletionPreset::DepositAllGems);
+    }
+    if matches!(objective, PuzzleObjective::DepositAllDiamonds) {
+        return Some(CourseCompletionPreset::DepositAllDiamonds);
+    }
+
+    // Compound presets (All with exactly 2 conditions)
+    if let PuzzleObjective::All { conditions } = objective {
+        if conditions.len() == 2 {
+            let (a, b) = (&conditions[0], &conditions[1]);
+
+            // collect_all_gems + reach_goal
+            if matches!(a, PuzzleObjective::CollectAllGems) && is_reach_goal(b, goal) {
+                return Some(CourseCompletionPreset::CollectAllGemsAndReachGoal);
+            }
+            // deposit_all_gems + reach_goal
+            if matches!(a, PuzzleObjective::DepositAllGems) && is_reach_goal(b, goal) {
+                return Some(CourseCompletionPreset::DepositAllGemsAndReachGoal);
+            }
+            // deposit_all_diamonds + reach_goal
+            if matches!(a, PuzzleObjective::DepositAllDiamonds) && is_reach_goal(b, goal) {
+                return Some(CourseCompletionPreset::DepositAllDiamondsAndReachGoal);
+            }
+        }
+    }
+
+    None
+}
+
+fn objective_to_spec(
+    objective: &PuzzleObjective,
+    goal: Option<Position>,
+) -> CourseObjectiveSpec {
+    match objective {
+        PuzzleObjective::ReachPosition { x, y } => {
+            if let Some(g) = goal {
+                if *x == g.x && *y == g.y {
+                    return CourseObjectiveSpec::ReachGoal;
+                }
+            }
+            CourseObjectiveSpec::ReachPosition { x: *x, y: *y }
+        }
+        PuzzleObjective::CollectAllGems => CourseObjectiveSpec::CollectAllGems,
+        PuzzleObjective::DepositAllGems => CourseObjectiveSpec::DepositAllGems,
+        PuzzleObjective::DepositAllDiamonds => CourseObjectiveSpec::DepositAllDiamonds,
+        PuzzleObjective::All { conditions } => CourseObjectiveSpec::All {
+            conditions: conditions
+                .iter()
+                .map(|c| objective_to_spec(c, goal))
+                .collect(),
+        },
+        // MaxInstructions/MaxSteps don't belong in completion, but handle gracefully
+        PuzzleObjective::MaxInstructions { .. } | PuzzleObjective::MaxSteps { .. } => {
+            CourseObjectiveSpec::ReachGoal
+        }
+    }
+}
+
+pub fn config_to_course_level(config: &PuzzleConfig) -> CourseLevelData {
+    let map = grid_to_ascii_map(&config.grid, &config.bot_start);
+
+    // Detect if completion has collect_all_gems folded in (from stars.collect_all_gems)
+    let (effective_completion, collect_all_gems_star) =
+        unfold_collect_all_gems(&config.completion);
+
+    let completion = objective_to_course_completion(effective_completion, &config.grid);
+
+    let mut stars = CourseStars {
+        collect_all_gems: collect_all_gems_star,
+        max_instructions: None,
+        max_steps: None,
+    };
+
+    for obj in &config.star_objectives {
+        match obj {
+            PuzzleObjective::MaxInstructions { instructions } => {
+                stars.max_instructions = Some(*instructions);
+            }
+            PuzzleObjective::MaxSteps { steps } => {
+                stars.max_steps = Some(*steps);
+            }
+            _ => {}
+        }
+    }
+
+    CourseLevelData {
+        level_id: config.puzzle_id.clone(),
+        title: config.title.clone(),
+        description: config.description.clone(),
+        map,
+        completion,
+        stars,
+        starter_code: config.starter_code.clone(),
+        hint: config.hint.clone(),
+        tutorial: config.tutorial.clone(),
+        theme: config.theme,
+    }
+}
+
+/// If the completion is `All{[X, CollectAllGems]}` where X is the "real" completion,
+/// extract X and set collect_all_gems = true. Otherwise return as-is.
+fn unfold_collect_all_gems(objective: &PuzzleObjective) -> (&PuzzleObjective, bool) {
+    if let PuzzleObjective::All { conditions } = objective {
+        if conditions.len() == 2 {
+            if matches!(conditions[1], PuzzleObjective::CollectAllGems) {
+                return (&conditions[0], true);
+            }
+            if matches!(conditions[0], PuzzleObjective::CollectAllGems) {
+                return (&conditions[1], true);
+            }
+        }
+    }
+    (objective, false)
+}
+
+/// Public wrapper around `parse_ascii_map` for tests and external use.
+pub fn parse_ascii_map_public(
+    level_id: &str,
+    rows: &[String],
+) -> Result<(Grid, BotState, Option<Position>), LevelParseError> {
+    parse_ascii_map(level_id, rows)
+}
+
+pub fn parse_level_from_json(json_str: &str) -> Result<PuzzleConfig, LevelParseError> {
+    let level: CourseLevelData = serde_json::from_str(json_str)
+        .map_err(|e| LevelParseError::InvalidJson(e.to_string()))?;
+    parse_course_level(level)
 }
 
 // ─── Helper ────────────────────────────────────────────────────────────────
@@ -571,5 +835,6 @@ for t in turns {
         .to_string(),
         hint: None,
         tutorial: None,
+        theme: None,
     }
 }
