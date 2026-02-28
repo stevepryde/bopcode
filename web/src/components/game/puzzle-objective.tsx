@@ -123,8 +123,6 @@ export function PuzzleObjectivePanel({
   const goalStatuses = goals.map((goal) =>
     goalContext ? isObjectiveMet(goal, goalContext) : puzzleCompleted,
   );
-  const goalsMetCount = goalStatuses.filter(Boolean).length;
-
   return (
     <div className="bg-zinc-50 dark:bg-zinc-900 rounded-lg p-4 space-y-4 border border-zinc-200 dark:border-zinc-800 border-l-2 border-l-[var(--theme-400)]/35">
       {/* Title -- clickable to collapse */}
@@ -143,22 +141,16 @@ export function PuzzleObjectivePanel({
 
         {/* Collapsed inline summary: goal + stars */}
         {collapsed && (
-          <div className="flex items-center gap-3 ml-auto shrink-0">
-            {/* Goal status */}
-            <span className={`text-xs ${puzzleCompleted ? "text-emerald-600 dark:text-emerald-300" : "text-zinc-500"}`}>
-              {puzzleCompleted ? (
-                <Check className="h-4 w-4" />
-              ) : (
-                <span className="truncate max-w-[120px] inline-block align-middle">
-                  {goals.length > 1
-                    ? `${goalsMetCount}/${goals.length} goals`
-                    : getObjectiveText(completion)}
-                </span>
-              )}
-            </span>
-
-            {/* Star icons */}
+          <div className="flex items-center gap-2 ml-auto shrink-0">
+            {/* Star icons (completion star + bonus stars) */}
             <div className="flex gap-0.5">
+              <Star
+                className={`h-4 w-4 ${
+                  puzzleCompleted
+                    ? "text-yellow-300 fill-yellow-300"
+                    : "text-zinc-600"
+                }`}
+              />
               {starObjectives.map((_, index) => {
                 const isMet = starsMet[index] ?? false;
                 return (
@@ -184,7 +176,7 @@ export function PuzzleObjectivePanel({
           {/* Completion objective */}
           <div className="space-y-2">
             <h3 className="text-sm font-semibold text-zinc-500 dark:text-zinc-300 uppercase tracking-wide">
-              {goals.length > 1 ? "Goals" : "Goal"}
+              {goals.length > 1 ? "Objectives" : "Objective"}
             </h3>
             <ul className="space-y-2">
               {goals.map((goal, index) => {
@@ -211,37 +203,53 @@ export function PuzzleObjectivePanel({
           </div>
 
           {/* Star objectives */}
-          {starObjectives.length > 0 && (
-            <div className="space-y-2">
-              <h3 className="text-sm font-semibold text-zinc-500 dark:text-zinc-300 uppercase tracking-wide">
-                Stars
-              </h3>
-              <ul className="space-y-2">
-                {starObjectives.map((objective, index) => {
-                  const isMet = starsMet[index] ?? false;
-                  return (
-                    <li
-                      key={index}
-                      className={`flex items-center gap-2 text-sm ${
-                        isMet ? "text-yellow-600 dark:text-yellow-300" : "text-zinc-600 dark:text-zinc-300"
+          <div className="space-y-2">
+            <h3 className="text-sm font-semibold text-zinc-500 dark:text-zinc-300 uppercase tracking-wide">
+              Stars
+            </h3>
+            <ul className="space-y-2">
+              {/* Star 1: Complete all objectives */}
+              <li
+                className={`flex items-center gap-2 text-sm ${
+                  puzzleCompleted ? "text-yellow-600 dark:text-yellow-300" : "text-zinc-600 dark:text-zinc-300"
+                }`}
+              >
+                <Star
+                  className={`h-4 w-4 ${
+                    puzzleCompleted
+                      ? "text-yellow-300 fill-yellow-300"
+                      : "text-zinc-500"
+                  }`}
+                />
+                <span className={puzzleCompleted ? "line-through opacity-70" : ""}>
+                  Complete all objectives
+                </span>
+              </li>
+              {/* Bonus stars from star_objectives */}
+              {starObjectives.map((objective, index) => {
+                const isMet = starsMet[index] ?? false;
+                return (
+                  <li
+                    key={index}
+                    className={`flex items-center gap-2 text-sm ${
+                      isMet ? "text-yellow-600 dark:text-yellow-300" : "text-zinc-600 dark:text-zinc-300"
+                    }`}
+                  >
+                    <Star
+                      className={`h-4 w-4 ${
+                        isMet
+                          ? "text-yellow-300 fill-yellow-300"
+                          : "text-zinc-500"
                       }`}
-                    >
-                      <Star
-                        className={`h-4 w-4 ${
-                          isMet
-                            ? "text-yellow-300 fill-yellow-300"
-                            : "text-zinc-500"
-                        }`}
-                      />
-                      <span className={isMet ? "line-through opacity-70" : ""}>
-                        {getObjectiveText(objective)}
-                      </span>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          )}
+                    />
+                    <span className={isMet ? "line-through opacity-70" : ""}>
+                      {getObjectiveText(objective)}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
 
           {/* Hint */}
           {showHint && hint && (

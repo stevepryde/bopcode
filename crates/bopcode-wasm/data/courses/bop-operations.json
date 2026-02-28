@@ -1,297 +1,363 @@
 {
-  "world": {
-    "world_id": "bop-operations",
-    "title": "Bop Operations",
-    "description": "Intermediate and advanced mission design with doors, keys, pits, diamonds, and vault logistics.",
-    "story_intro": "Plan routes, manage inventory, and solve larger open arenas with multiple objectives.",
-    "theme": "crystal_caves",
-    "sort_order": 20
-  },
-  "levels": [
-    {
-      "level_id": "bop-int-01",
-      "title": "Gate Warmup",
-      "description": "Grab a key, unlock the door, and reach the finish.",
-      "map": [
-        "###########",
-        "#S..K.D..G#",
-        "#.........#",
-        "#.........#",
-        "#.........#",
-        "#.........#",
-        "###########"
-      ],
-      "completion": "reach_goal",
-      "stars": { "max_instructions": 12, "max_steps": 12 },
-      "starter_code": "move(\"right\")\n",
-      "hint": "Pick up the key first. A locked door consumes one key when you step onto it.",
-      "tutorial": "# Doors and Keys\nUse `grab()` on key tiles, then move through locked doors. Any key opens any locked door."
+    "world": {
+        "world_id": "bop-operations",
+        "title": "Bop Operations",
+        "description": "Intermediate and advanced mission design with doors, keys, pits, diamonds, and vault logistics.",
+        "story_intro": "Plan routes, manage inventory, and solve larger open arenas with multiple objectives.",
+        "theme": "crystal_caves",
+        "sort_order": 20
     },
-    {
-      "level_id": "bop-int-02",
-      "title": "Relay Access",
-      "description": "Unlock one gate to reach a second key, then open the final gate.",
-      "map": [
-        "###############",
-        "#S..K..D......#",
-        "#.....##.######",
-        "#.....##..K.DG#",
-        "#.....##.######",
-        "#.....##......#",
-        "###############"
-      ],
-      "completion": "reach_goal",
-      "stars": { "max_instructions": 28, "max_steps": 24 },
-      "starter_code": "if key_here() { grab() }\n",
-      "hint": "Door 1 leads to key 2. You need that second key for the final door.",
-      "tutorial": "# Multi-door Planning\nPlan key usage ahead of time. A key is consumed when unlocking a door, so route order matters."
-    },
-    {
-      "level_id": "bop-int-03",
-      "title": "Pit Scout",
-      "description": "Use a safe route around pits in a larger open arena.",
-      "map": [
-        "#############",
-        "#S...P....G.#",
-        "#...........#",
-        "#..PPP......#",
-        "#...........#",
-        "#....P......#",
-        "#...........#",
-        "#############"
-      ],
-      "completion": "reach_goal",
-      "stars": { "max_instructions": 18, "max_steps": 15 },
-      "starter_code": "while path_ahead() {\n    move(\"right\")\n}\n",
-      "hint": "Pits are walkable in path checks but fatal on entry. Consider checking `pit_ahead()` before moving.",
-      "tutorial": "# Pit Safety\nUse `pit_ahead()` to avoid stepping into a pit tile."
-    },
-    {
-      "level_id": "bop-int-04",
-      "title": "Safe Crossing",
-      "description": "Collect a key, cross a gated chokepoint, and avoid the pit lane.",
-      "map": [
-        "#############",
-        "#S....P#...G#",
-        "#.....P#....#",
-        "#.....P#....#",
-        "#..K...D....#",
-        "#......#....#",
-        "#......#....#",
-        "#############"
-      ],
-      "completion": "reach_goal",
-      "stars": { "max_instructions": 26, "max_steps": 20 },
-      "starter_code": "if key_here() { grab() }\n",
-      "hint": "The bottom key path is safe. Crossing to the goal side only works through the door.",
-      "tutorial": "# Route Discipline\nSeparate unsafe pit lanes from safe lanes and commit to a route before coding."
-    },
-    {
-      "level_id": "bop-int-05",
-      "title": "Diamond Delivery",
-      "description": "Collect a diamond, deposit it in a diamond vault, then finish.",
-      "map": [
-        "#############",
-        "#S....R....G#",
-        "#...........#",
-        "#.....W.....#",
-        "#...........#",
-        "#############"
-      ],
-      "completion": {
-        "type": "all",
-        "conditions": [
-          { "type": "deposit_all_diamonds" },
-          { "type": "reach_goal" }
-        ]
-      },
-      "stars": { "max_instructions": 20, "max_steps": 18 },
-      "starter_code": "if diamond_here() { grab() }\n",
-      "hint": "`drop()` deposits one item at the matching vault tile.",
-      "tutorial": "# Diamond Vaults\nPick up diamonds with `grab()`. Stand on a diamond vault (`W`) and call `drop()` to deposit."
-    },
-    {
-      "level_id": "bop-int-06",
-      "title": "Double Diamond Circuit",
-      "description": "Collect two diamonds, deposit both, then route to the finish.",
-      "map": [
-        "###############",
-        "#S..R.....P..G#",
-        "#........P....#",
-        "#...#####P....#",
-        "#..R....W.....#",
-        "#.............#",
-        "###############"
-      ],
-      "completion": {
-        "type": "all",
-        "conditions": [
-          { "type": "deposit_all_diamonds" },
-          { "type": "reach_goal" }
-        ]
-      },
-      "stars": { "max_instructions": 34, "max_steps": 26 },
-      "starter_code": "if diamond_here() { grab() }\n",
-      "hint": "You can carry multiple diamonds. Deposit each one with `drop()`.",
-      "tutorial": "# Inventory and Drop-off\nCollecting before depositing can reduce backtracking in large maps."
-    },
-    {
-      "level_id": "bop-int-07",
-      "title": "Gem Bank",
-      "description": "Collect gems, deposit them in a gem vault, and then finish.",
-      "map": [
-        "###############",
-        "#S..*.....*..G#",
-        "#.............#",
-        "#.....V.......#",
-        "#.............#",
-        "#.............#",
-        "###############"
-      ],
-      "completion": {
-        "type": "all",
-        "conditions": [
-          { "type": "deposit_all_gems" },
-          { "type": "reach_goal" }
-        ]
-      },
-      "stars": { "max_instructions": 32, "max_steps": 24 },
-      "starter_code": "if gem_here() { grab() }\n",
-      "hint": "Deposit all held gems at `V` before heading to the goal.",
-      "tutorial": "# Gem Vault Objectives\n`deposit_all_gems` requires no gems left on the grid and no gems in inventory."
-    },
-    {
-      "level_id": "bop-int-08",
-      "title": "Mixed Cargo",
-      "description": "Collect both gems and diamonds, deposit each at the correct vault, then finish.",
-      "map": [
-        "#################",
-        "#S..*....R....G.#",
-        "#...............#",
-        "#.....V.....W...#",
-        "#...............#",
-        "#..R....*.......#",
-        "#...............#",
-        "#################"
-      ],
-      "completion": {
-        "type": "all",
-        "conditions": [
-          { "type": "deposit_all_gems" },
-          { "type": "deposit_all_diamonds" },
-          { "type": "reach_goal" }
-        ]
-      },
-      "stars": { "max_instructions": 46, "max_steps": 34 },
-      "starter_code": "if gem_here() { grab() }\nif diamond_here() { grab() }\n",
-      "hint": "You can hold gems and diamonds at the same time, but each vault accepts only one item type.",
-      "tutorial": "# Multi-goal Levels\nLarge maps reward batching: collect items first, then do grouped deposits."
-    },
-    {
-      "level_id": "bop-int-09",
-      "title": "Sector Sweep",
-      "description": "Unlock the sector gate, collect the gem, and return to finish.",
-      "map": [
-        "#################",
-        "#S...P..D....G..#",
-        "#.....P.#.......#",
-        "#..K..P.#.......#",
-        "#.......#.......#",
-        "#...###.#..*....#",
-        "#.......#.......#",
-        "#.......#.......#",
-        "#################"
-      ],
-      "completion": "collect_all_gems_and_reach_goal",
-      "stars": { "max_instructions": 44, "max_steps": 32 },
-      "starter_code": "if key_here() { grab() }\nif gem_here() { grab() }\n",
-      "hint": "Use the safe lower lane to approach the door from the left side.",
-      "tutorial": "# Open-Ended Navigation\nThere are multiple valid routes. Favor safer lanes over shortest-looking lanes."
-    },
-    {
-      "level_id": "bop-int-10",
-      "title": "Cargo Lock",
-      "description": "Bring two diamonds through a gate and deposit them before finishing.",
-      "map": [
-        "###################",
-        "#S..K..D....R..G..#",
-        "#......#....P.....#",
-        "#......#..........#",
-        "#..R...#..W.......#",
-        "#......#..........#",
-        "#......#....P.....#",
-        "#.................#",
-        "###################"
-      ],
-      "completion": {
-        "type": "all",
-        "conditions": [
-          { "type": "deposit_all_diamonds" },
-          { "type": "reach_goal" }
-        ]
-      },
-      "stars": { "max_instructions": 52, "max_steps": 38 },
-      "starter_code": "if key_here() { grab() }\nif diamond_here() { grab() }\n",
-      "hint": "Collect the left diamond before crossing the gate so you can batch deposit both diamonds.",
-      "tutorial": "# Throughput Planning\nBigger arenas reward fewer crossings between sectors."
-    },
-    {
-      "level_id": "bop-int-11",
-      "title": "Operations Maze",
-      "description": "A single maze-style mission with mixed logistics and a gated crossing.",
-      "map": [
-        "#####################",
-        "#S...K...D....R...G.#",
-        "#.......###.........#",
-        "#..R....#...P.......#",
-        "#.......#.....W.....#",
-        "#.......#...........#",
-        "#..*....#..V........#",
-        "#...................#",
-        "#####################"
-      ],
-      "completion": {
-        "type": "all",
-        "conditions": [
-          { "type": "deposit_all_gems" },
-          { "type": "deposit_all_diamonds" },
-          { "type": "reach_goal" }
-        ]
-      },
-      "stars": { "max_instructions": 68, "max_steps": 48 },
-      "starter_code": "if key_here() { grab() }\nif gem_here() { grab() }\nif diamond_here() { grab() }\n",
-      "hint": "Collect left-side cargo first, then cross the door once and process vaults on the right.",
-      "tutorial": "# Mixed Constraints\nThis level combines route choice, inventory management, and one controlled chokepoint."
-    },
-    {
-      "level_id": "bop-int-12",
-      "title": "Operations Finale",
-      "description": "Use two keys and two doors while completing full gem and diamond deposit objectives.",
-      "map": [
-        "#####################",
-        "#S..K..D....R..D.G..#",
-        "#.......#.....P.....#",
-        "#..R....#..K........#",
-        "#.......#...........#",
-        "#...*...#....W......#",
-        "#.......#...........#",
-        "#.......#..V........#",
-        "#....P..#...........#",
-        "#...................#",
-        "#####################"
-      ],
-      "completion": {
-        "type": "all",
-        "conditions": [
-          { "type": "deposit_all_gems" },
-          { "type": "deposit_all_diamonds" },
-          { "type": "reach_goal" }
-        ]
-      },
-      "stars": { "max_instructions": 86, "max_steps": 62 },
-      "starter_code": "if key_here() { grab() }\nif gem_here() { grab() }\nif diamond_here() { grab() }\n",
-      "hint": "Unlock the first door to reach key 2, then use key 2 for the final gate near the goal.",
-      "tutorial": "# Finale\nPlan in phases: left-side collection, first crossing, deposits, final unlock, finish."
-    }
-  ]
+    "levels": [
+        {
+            "level_id": "bop-int-01",
+            "title": "Gate Warmup",
+            "description": "Grab a key, unlock the door, and reach the finish.",
+            "map": [
+                "###########",
+                "#S..K.D..G#",
+                "###########"
+            ],
+            "completion": "reach_goal",
+            "stars": {
+                "max_instructions": 12,
+                "max_steps": 12
+            },
+            "starter_code": "move(\"right\")\n",
+            "hint": "Pick up the key first. A locked door consumes one key when you step onto it.",
+            "tutorial": "# Doors and Keys\nUse `grab()` on key tiles, then move through locked doors. Any key opens any locked door."
+        },
+        {
+            "level_id": "bop-int-02",
+            "title": "Relay Access",
+            "description": "Unlock one gate to reach a second key, then open the final gate.",
+            "map": [
+                "###############",
+                "#S...K.D......#",
+                "#.....##.######",
+                "#.....##......#",
+                "####..##D######",
+                "#KKD..##.....G#",
+                "###############"
+            ],
+            "completion": "reach_goal",
+            "stars": {
+                "max_instructions": 28,
+                "max_steps": 24
+            },
+            "starter_code": "if key_here() { grab() }\n",
+            "hint": "Collect the keys in the right order.",
+            "tutorial": "# Multi-door Planning\nPlan key usage ahead of time. A key is consumed when unlocking a door, so route order matters."
+        },
+        {
+            "level_id": "bop-int-03",
+            "title": "Pit Scout",
+            "description": "Use a safe route around pits in a larger open arena.",
+            "map": [
+                "#############",
+                "#S...P....G.#",
+                "#...........#",
+                "#..PPP......#",
+                "#...........#",
+                "#....P......#",
+                "#...........#",
+                "#############"
+            ],
+            "completion": "reach_goal",
+            "stars": {
+                "max_instructions": 18,
+                "max_steps": 15
+            },
+            "starter_code": "while path_ahead() {\n    move(\"right\")\n}\n",
+            "hint": "Pits are walkable in path checks but fatal on entry. Consider checking `pit_ahead()` before moving.",
+            "tutorial": "# Pit Safety\nUse `pit_ahead()` to avoid stepping into a pit tile."
+        },
+        {
+            "level_id": "bop-int-04",
+            "title": "Safe Crossing",
+            "description": "Collect a key, cross a gated chokepoint, and avoid the pit lane.",
+            "map": [
+                "#############",
+                "#S....P....G#",
+                "#.....P..P..#",
+                "#.....PP.P..#",
+                "#.....D..P..#",
+                "#..PPPPP.P..#",
+                "#....KP.....#",
+                "#############"
+            ],
+            "completion": "reach_goal",
+            "stars": {
+                "max_instructions": 26,
+                "max_steps": 20
+            },
+            "starter_code": "if key_here() { grab() }\n",
+            "hint": "Use pit_ahead() to check for pits.",
+            "tutorial": "# Route Discipline\nSeparate unsafe pit lanes from safe lanes and commit to a route before coding."
+        },
+        {
+            "level_id": "bop-int-05",
+            "title": "Diamond Delivery",
+            "description": "Collect a diamond, deposit it in a diamond vault, then finish.",
+            "map": [
+                "#############",
+                "#S....R....G#",
+                "#...........#",
+                "#.....W.....#",
+                "#...........#",
+                "#############"
+            ],
+            "completion": {
+                "type": "all",
+                "conditions": [
+                    {
+                        "type": "deposit_all_diamonds"
+                    },
+                    {
+                        "type": "reach_goal"
+                    }
+                ]
+            },
+            "stars": {
+                "max_instructions": 20,
+                "max_steps": 18
+            },
+            "starter_code": "if diamond_here() { grab() }\n",
+            "hint": "`drop()` deposits one item at the matching vault tile.",
+            "tutorial": "# Diamond Vaults\nPick up diamonds with `grab()`. Stand on a diamond vault (`W`) and call `drop()` to deposit."
+        },
+        {
+            "level_id": "bop-int-06",
+            "title": "Double Diamond Circuit",
+            "description": "Collect two diamonds, deposit both, then route to the finish.",
+            "map": [
+                "###############",
+                "#S..R.....P..G#",
+                "#........P....#",
+                "#...#####P....#",
+                "#..R....W.....#",
+                "#.............#",
+                "###############"
+            ],
+            "completion": {
+                "type": "all",
+                "conditions": [
+                    {
+                        "type": "deposit_all_diamonds"
+                    },
+                    {
+                        "type": "reach_goal"
+                    }
+                ]
+            },
+            "stars": {
+                "max_instructions": 34,
+                "max_steps": 26
+            },
+            "starter_code": "if diamond_here() { grab() }\n",
+            "hint": "You can carry multiple diamonds. Deposit each one with `drop()`.",
+            "tutorial": "# Inventory and Drop-off\nCollecting before depositing can reduce backtracking in large maps."
+        },
+        {
+            "level_id": "bop-int-07",
+            "title": "Gem Bank",
+            "description": "Collect gems, deposit them in a gem vault, and then finish.",
+            "map": [
+                "###############",
+                "#S..*.....*..G#",
+                "#.............#",
+                "#.....V.......#",
+                "#.............#",
+                "#.............#",
+                "###############"
+            ],
+            "completion": {
+                "type": "all",
+                "conditions": [
+                    {
+                        "type": "deposit_all_gems"
+                    },
+                    {
+                        "type": "reach_goal"
+                    }
+                ]
+            },
+            "stars": {
+                "max_instructions": 32,
+                "max_steps": 24
+            },
+            "starter_code": "if gem_here() { grab() }\n",
+            "hint": "Deposit all held gems at `V` before heading to the goal.",
+            "tutorial": "# Gem Vault Objectives\n`deposit_all_gems` requires no gems left on the grid and no gems in inventory."
+        },
+        {
+            "level_id": "bop-int-08",
+            "title": "Mixed Cargo",
+            "description": "Collect both gems and diamonds, deposit each at the correct vault, then finish.",
+            "map": [
+                "#################",
+                "#S..*....R....G.#",
+                "#...............#",
+                "#.....V.....W...#",
+                "#...............#",
+                "#..R....*.......#",
+                "#...............#",
+                "#################"
+            ],
+            "completion": {
+                "type": "all",
+                "conditions": [
+                    {
+                        "type": "deposit_all_gems"
+                    },
+                    {
+                        "type": "deposit_all_diamonds"
+                    },
+                    {
+                        "type": "reach_goal"
+                    }
+                ]
+            },
+            "stars": {
+                "max_instructions": 46,
+                "max_steps": 34
+            },
+            "starter_code": "if gem_here() { grab() }\nif diamond_here() { grab() }\n",
+            "hint": "You can hold gems and diamonds at the same time, but each vault accepts only one item type.",
+            "tutorial": "# Multi-goal Levels\nLarge maps reward batching: collect items first, then do grouped deposits."
+        },
+        {
+            "level_id": "bop-int-09",
+            "title": "Sector Sweep",
+            "description": "Unlock the sector gate, collect the gem, and return to finish.",
+            "map": [
+                "#################",
+                "#S...P..D....G..#",
+                "#.....P.#.......#",
+                "#..K..P.#.......#",
+                "#.......#.......#",
+                "#...###.#..*....#",
+                "#.......#.......#",
+                "#.......#.......#",
+                "#################"
+            ],
+            "completion": "collect_all_gems_and_reach_goal",
+            "stars": {
+                "max_instructions": 44,
+                "max_steps": 32
+            },
+            "starter_code": "if key_here() { grab() }\nif gem_here() { grab() }\n",
+            "hint": "Use the safe lower lane to approach the door from the left side.",
+            "tutorial": "# Open-Ended Navigation\nThere are multiple valid routes. Favor safer lanes over shortest-looking lanes."
+        },
+        {
+            "level_id": "bop-int-10",
+            "title": "Cargo Lock",
+            "description": "Bring two diamonds through a gate and deposit them before finishing.",
+            "map": [
+                "###################",
+                "#S..K..D....R..G..#",
+                "#......#....P.....#",
+                "#......#..........#",
+                "#..R...#..W.......#",
+                "#......#..........#",
+                "#......#....P.....#",
+                "#.................#",
+                "###################"
+            ],
+            "completion": {
+                "type": "all",
+                "conditions": [
+                    {
+                        "type": "deposit_all_diamonds"
+                    },
+                    {
+                        "type": "reach_goal"
+                    }
+                ]
+            },
+            "stars": {
+                "max_instructions": 52,
+                "max_steps": 38
+            },
+            "starter_code": "if key_here() { grab() }\nif diamond_here() { grab() }\n",
+            "hint": "Collect the left diamond before crossing the gate so you can batch deposit both diamonds.",
+            "tutorial": "# Throughput Planning\nBigger arenas reward fewer crossings between sectors."
+        },
+        {
+            "level_id": "bop-int-11",
+            "title": "Operations Maze",
+            "description": "A single maze-style mission with mixed logistics and a gated crossing.",
+            "map": [
+                "#####################",
+                "#S...K...D....R...G.#",
+                "#.......###.........#",
+                "#..R....#...P.......#",
+                "#.......#.....W.....#",
+                "#.......#...........#",
+                "#..*....#..V........#",
+                "#...................#",
+                "#####################"
+            ],
+            "completion": {
+                "type": "all",
+                "conditions": [
+                    {
+                        "type": "deposit_all_gems"
+                    },
+                    {
+                        "type": "deposit_all_diamonds"
+                    },
+                    {
+                        "type": "reach_goal"
+                    }
+                ]
+            },
+            "stars": {
+                "max_instructions": 68,
+                "max_steps": 48
+            },
+            "starter_code": "if key_here() { grab() }\nif gem_here() { grab() }\nif diamond_here() { grab() }\n",
+            "hint": "Collect left-side cargo first, then cross the door once and process vaults on the right.",
+            "tutorial": "# Mixed Constraints\nThis level combines route choice, inventory management, and one controlled chokepoint."
+        },
+        {
+            "level_id": "bop-int-12",
+            "title": "Operations Finale",
+            "description": "Use two keys and two doors while completing full gem and diamond deposit objectives.",
+            "map": [
+                "#####################",
+                "#S..K..D....R..D.G..#",
+                "#.......#.....P.....#",
+                "#..R....#..K........#",
+                "#.......#...........#",
+                "#...*...#....W......#",
+                "#.......#...........#",
+                "#.......#..V........#",
+                "#....P..#...........#",
+                "#...................#",
+                "#####################"
+            ],
+            "completion": {
+                "type": "all",
+                "conditions": [
+                    {
+                        "type": "deposit_all_gems"
+                    },
+                    {
+                        "type": "deposit_all_diamonds"
+                    },
+                    {
+                        "type": "reach_goal"
+                    }
+                ]
+            },
+            "stars": {
+                "max_instructions": 86,
+                "max_steps": 62
+            },
+            "starter_code": "if key_here() { grab() }\nif gem_here() { grab() }\nif diamond_here() { grab() }\n",
+            "hint": "Unlock the first door to reach key 2, then use key 2 for the final gate near the goal.",
+            "tutorial": "# Finale\nPlan in phases: left-side collection, first crossing, deposits, final unlock, finish."
+        }
+    ]
 }

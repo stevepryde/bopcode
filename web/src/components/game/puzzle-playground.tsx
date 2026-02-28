@@ -86,6 +86,12 @@ export function PuzzlePlayground({
   const simulationErrorRef = useRef<SimulationError | null>(null);
   const saveTimerRef = useRef<number | null>(null);
 
+  // Collect outputs from say actions
+  const outputs = useMemo(
+    () => actions.filter((a) => a.type === "say").map((a) => a.type === "say" ? a.message : ""),
+    [actions],
+  );
+
   // Collect warnings from bump actions
   const warnings = useMemo(
     () => actions.filter((a) => a.type === "bump").map((a) => a.type === "bump" ? a.message : ""),
@@ -221,7 +227,7 @@ export function PuzzlePlayground({
       if (puzzleCompleted && !celebrationShownRef.current) {
         celebrationShownRef.current = true;
         setShowCelebration(true);
-        onComplete(starsMet);
+        onComplete([puzzleCompleted, ...starsMet]);
       }
     }
   }, [currentActionIndex, actions, puzzle.bot_start, puzzle.grid, puzzleCompleted, starsMet, onComplete]);
@@ -409,6 +415,7 @@ export function PuzzlePlayground({
                   currentAction={currentActionIndex}
                   totalActions={actions.length}
                   disabled={isRunning}
+                  outputs={outputs}
                   warnings={warnings}
                 />
               </div>
@@ -500,7 +507,7 @@ export function PuzzlePlayground({
         completionLabel={completionLabel}
         worldName={worldName}
         hasNextPuzzle={hasNextPuzzle}
-        starsMet={[puzzleCompleted, ...starsMet].slice(0, 3)}
+        starsMet={[puzzleCompleted, ...starsMet]}
       />
     </div>
   );

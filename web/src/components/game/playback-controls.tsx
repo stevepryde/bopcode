@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Play, Pause, SkipForward, RotateCcw, AlertTriangle, X } from "lucide-react";
+import { Play, Pause, SkipForward, RotateCcw, AlertTriangle, MessageSquareText, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { PlaybackSpeed } from "@/types/game";
 
@@ -15,6 +15,7 @@ interface PlaybackControlsProps {
   totalActions: number;
   disabled?: boolean;
   warnings?: string[];
+  outputs?: string[];
 }
 
 const SPEEDS: PlaybackSpeed[] = [0.5, 1, 2, 4];
@@ -31,8 +32,10 @@ export function PlaybackControls({
   totalActions,
   disabled = false,
   warnings = [],
+  outputs = [],
 }: PlaybackControlsProps) {
   const [showWarnings, setShowWarnings] = useState(false);
+  const [showOutputs, setShowOutputs] = useState(false);
 
   return (
     <>
@@ -109,21 +112,68 @@ export function PlaybackControls({
           )}
         </div>
 
-        {/* Warning indicator */}
-        {warnings.length > 0 && (
+        {/* Output & warning indicators */}
+        {(outputs.length > 0 || warnings.length > 0) && (
           <>
             <div className="w-px h-5 bg-zinc-300 dark:bg-zinc-700 mx-0.5" />
-            <button
-              onClick={() => setShowWarnings(true)}
-              className="relative flex items-center gap-1 px-1.5 py-0.5 text-xs font-medium text-amber-600 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-900/30 rounded transition-colors cursor-pointer"
-              title="View warnings"
-            >
-              <AlertTriangle className="h-3.5 w-3.5" />
-              <span>{warnings.length}</span>
-            </button>
+            {outputs.length > 0 && (
+              <button
+                onClick={() => setShowOutputs(true)}
+                className="relative flex items-center gap-1 px-1.5 py-0.5 text-xs font-medium text-[var(--theme-600)] dark:text-[var(--theme-400)] hover:bg-[var(--theme-500)]/10 rounded transition-colors cursor-pointer"
+                title="View output"
+              >
+                <MessageSquareText className="h-3.5 w-3.5" />
+                <span>{outputs.length}</span>
+              </button>
+            )}
+            {warnings.length > 0 && (
+              <button
+                onClick={() => setShowWarnings(true)}
+                className="relative flex items-center gap-1 px-1.5 py-0.5 text-xs font-medium text-amber-600 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-900/30 rounded transition-colors cursor-pointer"
+                title="View warnings"
+              >
+                <AlertTriangle className="h-3.5 w-3.5" />
+                <span>{warnings.length}</span>
+              </button>
+            )}
           </>
         )}
       </div>
+
+      {/* Output modal */}
+      {showOutputs && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setShowOutputs(false)}>
+          <div
+            className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl shadow-xl max-w-md w-full mx-4 overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-200 dark:border-zinc-800">
+              <div className="flex items-center gap-2">
+                <MessageSquareText className="h-4 w-4 text-[var(--theme-500)]" />
+                <h3 className="text-sm font-semibold text-zinc-900 dark:text-white">
+                  Output ({outputs.length})
+                </h3>
+              </div>
+              <button
+                onClick={() => setShowOutputs(false)}
+                className="p-1 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors cursor-pointer"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="px-4 py-3 max-h-60 overflow-y-auto space-y-1">
+              {outputs.map((msg, i) => (
+                <div
+                  key={i}
+                  className="font-mono text-sm text-zinc-700 dark:text-zinc-300"
+                >
+                  {msg}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Warnings modal */}
       {showWarnings && (

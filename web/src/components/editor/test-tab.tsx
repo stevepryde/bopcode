@@ -95,6 +95,10 @@ function applyAction(action: GameAction, bot: BotState, grid: Grid) {
 export function TestTab({ config, onConfigChange, code, onCodeChange }: TestTabProps) {
   const colorMode = useColorMode();
   const [actions, setActions] = useState<GameAction[]>([]);
+  const outputs = useMemo(
+    () => actions.filter((a) => a.type === "say").map((a) => a.type === "say" ? a.message : ""),
+    [actions],
+  );
   const warnings = useMemo(
     () => actions.filter((a) => a.type === "bump").map((a) => a.type === "bump" ? a.message : ""),
     [actions],
@@ -321,6 +325,7 @@ export function TestTab({ config, onConfigChange, code, onCodeChange }: TestTabP
             currentAction={currentActionIndex}
             totalActions={actions.length}
             disabled={isRunning}
+            outputs={outputs}
             warnings={warnings}
           />
         </div>
@@ -406,7 +411,7 @@ export function TestTab({ config, onConfigChange, code, onCodeChange }: TestTabP
         onRepeatLevel={() => setShowCelebration(false)}
         repeatLabel="Keep Testing"
         hasNextPuzzle={false}
-        starsMet={[puzzleCompleted, ...starsMet].slice(0, 3)}
+        starsMet={[puzzleCompleted, ...starsMet]}
       />
     </div>
   );
