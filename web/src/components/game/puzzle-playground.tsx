@@ -8,7 +8,7 @@ import { CelebrationOverlay } from "./celebration-overlay";
 import { BopReference } from "./bop-reference";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { runSimulation } from "@/lib/wasm";
+import { runSimulationWithConfig } from "@/lib/wasm";
 import { registerBopLanguage } from "@/lib/monaco-bop";
 import { useColorMode } from "@/lib/theme";
 import type {
@@ -261,7 +261,7 @@ export function PuzzlePlayground({
     }
 
     try {
-      const result = runSimulation(puzzle.puzzle_id, code);
+      const result = runSimulationWithConfig(puzzle, code);
 
       setActions(result.actions);
       setStarsMet(result.stars_met);
